@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Connection.class)
 public class ConnectionMixin {
-    @Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;Z)V", at = @At("HEAD"), cancellable = true)
-    public void send(Packet<?> packet, @Nullable PacketSendListener packetSendListener, boolean bl, CallbackInfo ci) {
+    @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
+    public void sendPacket(Packet<?> packet, @Nullable PacketSendListener packetSendListener, boolean bl, CallbackInfo ci) {
         if (packet instanceof ServerboundCustomPayloadPacket(CustomPacketPayload payload)) {
             if (!(payload instanceof DiscardedPayload) && !(payload instanceof BrandPayload)) {
                 if (ClientSpooferOptions.SPOOF_MODE == SpoofMode.OFF) {
