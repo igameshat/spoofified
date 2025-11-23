@@ -12,6 +12,7 @@
     "client.AnvilScreenMixin",
     "client.ClientBrandRetrieverMixin",
     "client.ConnectionMixin",
+    "client.KnownPacksManagerMixin",
     "client.LanguageManagerAccessor"
   ],
   "injectors": {

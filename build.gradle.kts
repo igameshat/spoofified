@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.fabiexe"
-version = "1.2.0"
+version = "1.3.0"
 
 repositories {
     maven("https://maven.terraformersmc.com")
@@ -15,7 +15,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.14")
     modImplementation("com.terraformersmc:modmenu:14.0.0-rc.2")
-    modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:0.127.1+1.21.5")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.127.1+1.21.5")
     implementation("com.google.code.gson:gson:2.13.1")
 }
 
