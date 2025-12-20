@@ -28,16 +28,7 @@ public class ClientSpooferOptions {
             JsonObject json = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
 
             if (json.has("spoof-mode")) {
-                String mode = json.get("spoof-mode").getAsString();
-                if (mode.equalsIgnoreCase("vanilla")) {
-                    SPOOF_MODE = SpoofMode.VANILLA;
-                } else if (mode.equalsIgnoreCase("fabric")) {
-                    SPOOF_MODE = SpoofMode.MODDED;
-                } else if (mode.equalsIgnoreCase("custom")) {
-                    SPOOF_MODE = SpoofMode.CUSTOM;
-                } else if (mode.equalsIgnoreCase("off")) {
-                    SPOOF_MODE = SpoofMode.OFF;
-                }
+                SPOOF_MODE = SpoofMode.valueOf(json.get("spoof-mode").getAsString().toUpperCase());
             } else {
                 save(path);
             }
@@ -64,6 +55,15 @@ public class ClientSpooferOptions {
                 ALLOWED_MODS.clear();
                 for (var element : json.getAsJsonArray("allowed-mods")) {
                     ALLOWED_MODS.add(element.getAsString());
+                }
+            } else {
+                save(path);
+            }
+
+            if (json.has("allowed-custom-payload-channels")) {
+                ALLOWED_CUSTOM_PAYLOAD_CHANNELS.clear();
+                for (var element : json.getAsJsonArray("allowed-custom-payload-channels")) {
+                    ALLOWED_CUSTOM_PAYLOAD_CHANNELS.add(element.getAsString());
                 }
             } else {
                 save(path);
