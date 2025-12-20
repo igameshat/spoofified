@@ -14,7 +14,22 @@ public class AnvilScreenMixin {
     @Redirect(
             method = "slotChanged",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;getString()Ljava/lang/String;"))
-    public String getString(Component instance) {
+    public String slotChanged$getString(Component instance) {
+        if (ClientSpooferOptions.hideMods()) {
+            String str = ComponentUtils.getString(instance);
+            if (!str.equals(instance.getString())) {
+                ToastUtils.showServerAttemptedReadingModsToast();
+            }
+            return str;
+        } else {
+            return instance.getString();
+        }
+    }
+
+    @Redirect(
+            method = "onNameChanged",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;getString()Ljava/lang/String;"))
+    public String onNameChanged$getString(Component instance) {
         if (ClientSpooferOptions.hideMods()) {
             String str = ComponentUtils.getString(instance);
             if (!str.equals(instance.getString())) {
