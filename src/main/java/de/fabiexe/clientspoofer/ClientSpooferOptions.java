@@ -15,6 +15,7 @@ public class ClientSpooferOptions {
     public static String CUSTOM_CLIENT = "fabric";
     public static boolean HIDE_MODS = true;
     public static boolean DISABLE_CUSTOM_PAYLOADS = true;
+    public static boolean PREVENT_FINGERPRINTING = true;
     public static Set<String> ALLOWED_MODS = new HashSet<>();
     public static Set<String> ALLOWED_CUSTOM_PAYLOAD_CHANNELS = new HashSet<>();
 
@@ -51,6 +52,12 @@ public class ClientSpooferOptions {
                 save(path);
             }
 
+            if (json.has("prevent-fingerprinting")) {
+                PREVENT_FINGERPRINTING = json.get("prevent-fingerprinting").getAsBoolean();
+            } else {
+                save(path);
+            }
+
             if (json.has("allowed-mods")) {
                 ALLOWED_MODS.clear();
                 for (var element : json.getAsJsonArray("allowed-mods")) {
@@ -80,6 +87,7 @@ public class ClientSpooferOptions {
             json.addProperty("custom-client", CUSTOM_CLIENT);
             json.addProperty("hide-mods", HIDE_MODS);
             json.addProperty("disable-custom-payloads", DISABLE_CUSTOM_PAYLOADS);
+            json.addProperty("prevent-fingerprinting", PREVENT_FINGERPRINTING);
             JsonArray allowedModsArray = new JsonArray();
             ALLOWED_MODS.forEach(allowedModsArray::add);
             json.add("allowed-mods", allowedModsArray);
@@ -96,6 +104,14 @@ public class ClientSpooferOptions {
         return switch (SPOOF_MODE) {
             case SpoofMode.VANILLA, SpoofMode.MODDED -> true;
             case SpoofMode.CUSTOM -> HIDE_MODS;
+            case SpoofMode.OFF -> false;
+        };
+    }
+
+    public static boolean preventFingerprinting() {
+        return switch (SPOOF_MODE) {
+            case SpoofMode.VANILLA, SpoofMode.MODDED -> true;
+            case SpoofMode.CUSTOM -> PREVENT_FINGERPRINTING;
             case SpoofMode.OFF -> false;
         };
     }

@@ -66,11 +66,23 @@ public class ClientSpooferOptionsScreen extends Screen {
             widgets.add(customClientEditBox);
         }
 
+        // Prevent fingerprinting
+        if (spoofMode == SpoofMode.CUSTOM) {
+            Component text = Component.translatable("clientspoofer.option.prevent_fingerprinting")
+                    .append(": ")
+                    .append(ClientSpooferOptions.PREVENT_FINGERPRINTING ? OPTION_ON : OPTION_OFF);
+            widgets.add(Button.builder(text, button -> {
+                ClientSpooferOptions.PREVENT_FINGERPRINTING = !ClientSpooferOptions.PREVENT_FINGERPRINTING;
+                rebuildWidgets();
+            }).size(200, 20).build());
+        }
+
         // Hide mods
         if (spoofMode == SpoofMode.CUSTOM) {
-            MutableComponent hideModsButtonText = Component.translatable("clientspoofer.option.hide_mods").append(": ");
-            hideModsButtonText = hideModsButtonText.append(ClientSpooferOptions.HIDE_MODS ? OPTION_ON : OPTION_OFF);
-            widgets.add(Button.builder(hideModsButtonText, button -> {
+            Component text = Component.translatable("clientspoofer.option.hide_mods")
+                    .append(": ")
+                    .append(ClientSpooferOptions.HIDE_MODS ? OPTION_ON : OPTION_OFF);
+            widgets.add(Button.builder(text, button -> {
                 ClientSpooferOptions.HIDE_MODS = !ClientSpooferOptions.HIDE_MODS;
                 rebuildWidgets();
             }).size(200, 20).build());

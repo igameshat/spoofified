@@ -5,6 +5,7 @@
   "clientspoofer.option.spoof_mode.modded": "Modded",
   "clientspoofer.option.spoof_mode.custom": "Benutzerdefiniert",
   "clientspoofer.option.custom_client": "Benutzerdefinierter Client",
+  "clientspoofer.option.prevent_fingerprinting": "Fingerabdruck verhindern",
   "clientspoofer.option.hide_mods": "Mod-Liste verbergen",
   "clientspoofer.option.allowed_mods": "Erlaubte Mods (werden auch beim Verbergen der Mods angezeigt)",
   "clientspoofer.option.disable_custom_payloads": "Custom Payloads deaktivieren (von einigen Mods verwendet)",

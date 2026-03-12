@@ -5,6 +5,7 @@
   "clientspoofer.option.spoof_mode.modded": "Modded",
   "clientspoofer.option.spoof_mode.custom": "Custom",
   "clientspoofer.option.custom_client": "Custom Client",
+  "clientspoofer.option.prevent_fingerprinting": "Prevent Fingerprinting",
   "clientspoofer.option.hide_mods": "Hide Mods",
   "clientspoofer.option.allowed_mods": "Allowed Mods (to show even when hiding mods)",
   "clientspoofer.option.filter": "Filter",
