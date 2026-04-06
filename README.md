@@ -94,6 +94,7 @@ The mod is configured via `config/clientspoofer.json`:
 
 - **Cytooxien** (`cytooxien.de`)
 - **HugoSMP** (`hugosmp.net`)
+- **DonutSMP** (`donutsmp.net`)
 
 > These servers are known to use client detection. spoofified successfully prevents detection on them.
 
