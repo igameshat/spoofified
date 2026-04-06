@@ -13,4 +13,4 @@ This mod hides your client name and your mod list from servers.
 
 **Privatsphäre made in Germany**
 
-<img src="hugosmp.png" alt="Protects you from HugoSMP">
+<img src="hugosmp.png" alt="Protects you from HugoSMP">"# spoofified" 
