@@ -41,11 +41,11 @@ public class ComponentUtils {
 
     public static @NotNull Optional<String> visit(@NotNull ComponentContents contents) {
         if (contents instanceof KeybindContents keybind) {
-            if (!canTranslate(keybind.getName())) {
+            if (canTranslate(keybind.getName())) {
                 return Optional.of(keybind.getName());
             }
         } else if (contents instanceof TranslatableContents translatable) {
-            if (!canTranslate(translatable.getKey())) {
+            if (canTranslate(translatable.getKey())) {
                 return Optional.of(Objects.requireNonNullElseGet(translatable.getFallback(), translatable::getKey));
             }
         }
@@ -63,10 +63,10 @@ public class ComponentUtils {
                 serverLanguages.put(minecraft.getConnection(), createServerLanguage());
             }
 
-            return serverLanguages.get(minecraft.getConnection()).has(key);
+            return !serverLanguages.get(minecraft.getConnection()).has(key);
         }
 
-        return language.has(key);
+        return !language.has(key);
     }
 
     private static @NotNull Language createServerLanguage() {

@@ -14,12 +14,14 @@
   "environment": "client",
   "entrypoints": {
     "client": ["de.fabiexe.clientspoofer.ClientSpoofer"],
+    "preLaunch": ["de.fabiexe.clientspoofer.ClientSpooferPreLaunch"],
     "modmenu": ["de.fabiexe.clientspoofer.integration.ModMenuIntegration"]
+
   },
   "mixins": ["clientspoofer.mixins.json"],
   "depends": {
     "fabricloader": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "~${minecraft_version}"
   },
   "recommends": {
     "modmenu": ">=${modmenu_version}"

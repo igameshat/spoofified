@@ -15,7 +15,7 @@ public class AnvilMenuMixin {
             method = "createResult",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;getString()Ljava/lang/String;"))
     public String getString(Component instance) {
-        if (ClientSpooferOptions.hideMods()) {
+        if (ClientSpooferOptions.hideMods() || !ClientSpooferOptions.ENABLED) {
             String str = ComponentUtils.getString(instance);
             if (!str.equals(instance.getString())) {
                 ToastUtils.showServerAttemptedReadingModsToast();

@@ -1,0 +1,13 @@
+{
+  "pack": {
+    "pack_format": 34,
+    "description": "ClientSpoofer internal resources"
+  },
+  "language": {
+      "en_secret": {
+        "name": "Enbraqia",
+        "region": "Uuqda",
+        "bidirectional": false
+      }
+  }
+}

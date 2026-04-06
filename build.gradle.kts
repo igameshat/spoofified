@@ -4,11 +4,10 @@ plugins {
 }
 
 group = "de.fabiexe"
-version = "1.4.0"
+version = "2.0.0"
 
 repositories {
     maven("https://maven.terraformersmc.com")
-    maven("https://maven.nucleoid.xyz") // ModMenu has dependency to Placeholder API
 }
 
 dependencies {
@@ -42,21 +41,5 @@ tasks {
 
     jar {
         archiveBaseName = "ClientSpoofer-${libs.versions.minecraft.get()}"
-    }
-}
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "nWJHVhGM"
-    versionName = "$version (${libs.versions.minecraft.get()})"
-    versionNumber = "$version-${libs.versions.minecraft.get()}"
-    versionType = if (version.toString().contains("alpha")) "alpha"
-    else if (version.toString().contains("beta")) "beta"
-    else "release"
-    uploadFile = tasks.jar.get()
-    gameVersions = listOf(libs.versions.minecraft.get())
-    loaders = listOf("fabric")
-    dependencies {
-        optional.project("modmenu")
     }
 }

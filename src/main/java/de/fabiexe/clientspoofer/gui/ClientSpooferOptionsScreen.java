@@ -150,6 +150,14 @@ public class ClientSpooferOptionsScreen extends Screen {
             widgets.add(editBox);
         }
 
+        // ==========================================
+        // NEW: Open Custom Mod Spoofing GUI
+        // ==========================================
+        widgets.add(Button.builder(Component.literal("Configure Hidden Mods..."), _ -> {
+            ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+            this.minecraft.setScreen(new ClientModSpoofingScreen(this));
+        }).size(200, 20).build());
+
         // Done
         widgets.add(Button.builder(Component.translatable("gui.done"), _ -> onClose())
                 .size(200, 20)

@@ -1,4 +1,114 @@
 package de.fabiexe.clientspoofer.mixin.client.hidingUtils.widgetManager;
 
+import de.fabiexe.clientspoofer.ClientSpoofer;
+import de.fabiexe.clientspoofer.ClientSpooferOptions;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.input.MouseButtonInfo;
+import org.lwjgl.glfw.GLFW;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.components.AbstractWidget;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.lang.reflect.Method;
+
+@Mixin(MouseHandler.class)
 public class MixinMouseHandler {
+
+    @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
+    private void clientspoofer$globalClick(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
+        // THE SHIELD
+        if (ClientSpooferOptions.isProtectedScreen()) return;
+
+        if (action == 1) {
+            AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
+            if (owner != null) {
+                Minecraft client = Minecraft.getInstance();
+                double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
+                double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
+
+                int mx = ClientSpooferOptions.MENU_X;
+                int my = ClientSpooferOptions.MENU_Y;
+
+                boolean inMainMenu = mouseX >= mx && mouseX <= mx + 80 && mouseY >= my && mouseY <= my + 60;
+                boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
+
+                if (inMainMenu) {
+                    if (rawButtonInfo.button() == 0) {
+                        String widgetName = owner.getMessage().getString();
+                        if (mouseY < my + 20) {
+                            // Toggle Hide/Reveal and Save
+                            if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(widgetName)) {
+                                ClientSpooferOptions.HIDDEN_WIDGETS.remove(widgetName);
+                            } else {
+                                ClientSpooferOptions.HIDDEN_WIDGETS.add(widgetName);
+                            }
+                            if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+                        } else if (mouseY < my + 40) {
+                            // Delete and Save
+                            ClientSpooferOptions.DELETED_WIDGETS.add(widgetName);
+                            if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+                        }
+                    }
+                    ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
+                    ci.cancel();
+                }
+                else if (inSubMenu) {
+                    ci.cancel();
+                }
+                else {
+                    ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
+                }
+            }
+        }
+    }
+
+    @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
+    private void clientspoofer$globalScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
+        // THE SHIELD
+        if (ClientSpooferOptions.isProtectedScreen()) return;
+
+        AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
+        if (owner != null) {
+            Minecraft client = Minecraft.getInstance();
+            double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
+            double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
+
+            int subX = ClientSpooferOptions.MENU_X + 80;
+            int subY = ClientSpooferOptions.MENU_Y + 40;
+
+            if (mouseX >= subX && mouseX <= subX + 100 && mouseY >= subY && mouseY <= subY + 80) {
+                int scrollAmount = yoffset > 0 ? 1 : -1;
+                boolean isCtrlDown = InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_RIGHT_CONTROL);
+                if (isCtrlDown) scrollAmount *= 10;
+
+                if (mouseY < subY + 20) owner.setX(owner.getX() + scrollAmount);
+                else if (mouseY < subY + 40) owner.setY(owner.getY() + scrollAmount);
+                else if (mouseY < subY + 60) owner.setWidth(owner.getWidth() + scrollAmount);
+                else {
+                    try {
+                        for (Method m : AbstractWidget.class.getDeclaredMethods()) {
+                            if (m.getName().equals("setHeight") || m.getName().equals("m_93674_")) {
+                                m.setAccessible(true);
+                                m.invoke(owner, owner.getHeight() + scrollAmount);
+                                break;
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                }
+
+                // SAVE THE NEW BOUNDS
+                String widgetName = owner.getMessage().getString();
+                ClientSpooferOptions.CUSTOM_BOUNDS.put(widgetName, new ClientSpooferOptions.WidgetBounds(
+                        owner.getX(), owner.getY(), owner.getWidth(), owner.getHeight()
+                ));
+                if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+
+                ci.cancel();
+            }
+        }
+    }
 }

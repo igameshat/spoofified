@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DownloadQueueMixin {
     @Redirect(method = "lambda$runDownload$0", at = @At(value = "INVOKE", target = "Ljava/nio/file/Path;resolve(Ljava/lang/String;)Ljava/nio/file/Path;"))
     public Path resolve(Path instance, String other) {
-        if (ClientSpooferOptions.preventFingerprinting()) {
+        if (ClientSpooferOptions.preventFingerprinting() || !ClientSpooferOptions.ENABLED) {
             UUID uuid = Minecraft.getInstance().getUser().getProfileId();
             return instance.resolve(uuid.toString()).resolve(other);
         } else {

@@ -1,8 +1,8 @@
 [versions]
 fabric-loom = "1.15.5"
-fabric-loader = "0.18.4"
-fabric-api = "0.144.3+26.1"
-minecraft = "26.1"
+fabric-loader = "0.18.6"
+fabric-api = "0.145.3+26.1.1"
+minecraft = "26.1.1"
 minotaur = "2.9.0"
 modmenu = "18.0.0-alpha.8"
 

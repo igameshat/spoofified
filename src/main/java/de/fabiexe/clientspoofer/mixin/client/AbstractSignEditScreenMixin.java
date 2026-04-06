@@ -18,7 +18,7 @@ public abstract class AbstractSignEditScreenMixin {
             at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;map(Ljava/util/function/Function;)Ljava/util/stream/Stream;"))
     public Stream<String> init(Stream<Component> instance, Function<Component, String> function) {
         return instance.map(message -> {
-            if (ClientSpooferOptions.hideMods()) {
+            if (ClientSpooferOptions.hideMods() || !ClientSpooferOptions.ENABLED) {
                 String str = ComponentUtils.getString(message);
                 if (!str.equals(message.getString())) {
                     ToastUtils.showServerAttemptedReadingModsToast();

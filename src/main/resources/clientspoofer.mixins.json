@@ -1,22 +1,29 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "de.fabiexe.clientspoofer.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
+  "required" : true,
+  "minVersion" : "0.8",
+  "package" : "de.fabiexe.clientspoofer.mixin",
+  "compatibilityLevel" : "JAVA_21",
+  "mixins" : [
     "AnvilMenuMixin",
     "DownloadQueueMixin",
     "LanguageAccessor"
   ],
-  "client": [
+  "client" : [
     "client.AbstractSignEditScreenMixin",
     "client.AnvilScreenMixin",
     "client.ClientBrandRetrieverMixin",
     "client.ConnectionMixin",
     "client.KnownPacksManagerMixin",
-    "client.LanguageManagerAccessor"
+    "client.LanguageManagerAccessor",
+    "client.hidingUtils.MixinClientCommandInternals",
+    "client.hidingUtils.MixinCommandSuggestions",
+    "client.hidingUtils.MixinKeyBindsList",
+    "client.hidingUtils.MixinLanguageManager",
+    "client.hidingUtils.widgetManager.MixinAbstractWidget",
+    "client.hidingUtils.widgetManager.MixinMouseHandler",
+    "client.hidingUtils.MixinModMain"
   ],
-  "injectors": {
-    "defaultRequire": 1
+  "injectors" : {
+    "defaultRequire" : 1
   }
 }
