@@ -24,6 +24,6 @@ public class MixinCrashOutButton extends Screen {
         this.addRenderableWidget(Button.builder(Component.literal("Crash Out"), (_) -> {
 
             Minecraft.getInstance().setScreen(new WidgetRestoreScreen(Minecraft.getInstance().screen));
-        }).bounds(Minecraft.getInstance().screen.width-8, Minecraft.getInstance().screen.height-8, 10, 10).build());
+        }).bounds(Minecraft.getInstance().screen.width-9, Minecraft.getInstance().screen.height-9, 10, 10).build());
     }
 }
