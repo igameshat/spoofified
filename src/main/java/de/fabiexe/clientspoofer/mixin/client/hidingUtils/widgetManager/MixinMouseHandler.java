@@ -20,13 +20,15 @@ public class MixinMouseHandler {
 
     @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
     private void clientspoofer$globalClick(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
-        // THE SHIELD
+        // THE SHIELD: Prevent spoofing logic on config screens
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
-        if (action == 1) {
+        if (action == 1) { // 1 is GLFW_PRESS
             AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
             if (owner != null) {
                 Minecraft client = Minecraft.getInstance();
+
+                // Calculate GUI Scaled Coordinates
                 double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
                 double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
 
@@ -37,29 +39,44 @@ public class MixinMouseHandler {
                 boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
 
                 if (inMainMenu) {
-                    if (rawButtonInfo.button() == 0) {
-                        String widgetName = owner.getMessage().getString();
+                    if (rawButtonInfo.button() == 0) { // 0 is Left Click
+                        // Use Unique ID instead of raw string
+                        String uniqueId = ClientSpooferOptions.getWidgetId(owner);
+
                         if (mouseY < my + 20) {
                             // Toggle Hide/Reveal and Save
-                            if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(widgetName)) {
-                                ClientSpooferOptions.HIDDEN_WIDGETS.remove(widgetName);
+                            if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId)) {
+                                ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
                             } else {
-                                ClientSpooferOptions.HIDDEN_WIDGETS.add(widgetName);
+                                ClientSpooferOptions.HIDDEN_WIDGETS.add(uniqueId);
                             }
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+
+                            // -> RECALCULATE UI <-
+                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.screen != null) {
+                                ((ScreenAccessor) client.screen).clientspoofer$invokeRebuildWidgets();
+                            }
+
                         } else if (mouseY < my + 40) {
                             // Delete and Save
-                            ClientSpooferOptions.DELETED_WIDGETS.add(widgetName);
+                            ClientSpooferOptions.DELETED_WIDGETS.add(uniqueId);
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+
+                            // -> RECALCULATE UI <-
+                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.screen != null) {
+                                client.screen.resize(client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
+                            }
                         }
                     }
                     ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
                     ci.cancel();
                 }
                 else if (inSubMenu) {
+                    // Clicks inside the sub-menu consume the event but keep it open (for scrolling)
                     ci.cancel();
                 }
                 else {
+                    // Clicked outside: Close menu
                     ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
                 }
             }
@@ -80,16 +97,21 @@ public class MixinMouseHandler {
             int subX = ClientSpooferOptions.MENU_X + 80;
             int subY = ClientSpooferOptions.MENU_Y + 40;
 
+            // Check if hovering the Edit sub-menu boundaries
             if (mouseX >= subX && mouseX <= subX + 100 && mouseY >= subY && mouseY <= subY + 80) {
                 int scrollAmount = yoffset > 0 ? 1 : -1;
+
+                // Use CTRL for the 10x multiplier
                 boolean isCtrlDown = InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_RIGHT_CONTROL);
                 if (isCtrlDown) scrollAmount *= 10;
 
+                // Adjust Bounds
                 if (mouseY < subY + 20) owner.setX(owner.getX() + scrollAmount);
                 else if (mouseY < subY + 40) owner.setY(owner.getY() + scrollAmount);
                 else if (mouseY < subY + 60) owner.setWidth(owner.getWidth() + scrollAmount);
                 else {
                     try {
+                        // Reflection fallback for setHeight (often doesn't have a public setter)
                         for (Method m : AbstractWidget.class.getDeclaredMethods()) {
                             if (m.getName().equals("setHeight") || m.getName().equals("m_93674_")) {
                                 m.setAccessible(true);
@@ -100,14 +122,15 @@ public class MixinMouseHandler {
                     } catch (Exception ignored) {}
                 }
 
-                // SAVE THE NEW BOUNDS
-                String widgetName = owner.getMessage().getString();
-                ClientSpooferOptions.CUSTOM_BOUNDS.put(widgetName, new ClientSpooferOptions.WidgetBounds(
+                // SAVE THE NEW BOUNDS using Unique ID
+                String uniqueId = ClientSpooferOptions.getWidgetId(owner);
+                ClientSpooferOptions.CUSTOM_BOUNDS.put(uniqueId, new ClientSpooferOptions.WidgetBounds(
                         owner.getX(), owner.getY(), owner.getWidth(), owner.getHeight()
                 ));
+
                 if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
-                ci.cancel();
+                ci.cancel(); // Stop the scroll from affecting the actual screen content
             }
         }
     }

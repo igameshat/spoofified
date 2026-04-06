@@ -19,9 +19,13 @@
     "client.hidingUtils.MixinCommandSuggestions",
     "client.hidingUtils.MixinKeyBindsList",
     "client.hidingUtils.MixinLanguageManager",
+    "client.hidingUtils.MixinModMain",
     "client.hidingUtils.widgetManager.MixinAbstractWidget",
+    "client.hidingUtils.widgetManager.MixinCrashOutButton",
+    "client.hidingUtils.widgetManager.MixinGridLayout",
+    "client.hidingUtils.widgetManager.MixinLinearLayout",
     "client.hidingUtils.widgetManager.MixinMouseHandler",
-    "client.hidingUtils.MixinModMain"
+    "client.hidingUtils.widgetManager.ScreenAccessor"
   ],
   "injectors" : {
     "defaultRequire" : 1

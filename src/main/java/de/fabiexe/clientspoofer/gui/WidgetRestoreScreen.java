@@ -45,7 +45,27 @@ public class WidgetRestoreScreen extends Screen {
         int spacing = 10;
         int startX = this.width / 2 - (buttonWidth * 3 + spacing * 2) / 2;
 
-        // Top Navigation Tabs
+        // ==========================================
+        // THE NEW TOGGLE BUTTON
+        // ==========================================
+        addRenderableWidget(Button.builder(
+                Component.literal("Auto-Recalculate: " + (ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF")),
+                button -> {
+                    // Flip the boolean
+                    ClientSpooferOptions.AUTO_RECALCULATE_UI = !ClientSpooferOptions.AUTO_RECALCULATE_UI;
+
+                    // Update the button text dynamically
+                    button.setMessage(Component.literal("Auto-Recalculate: " + (ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF")));
+
+                    // Save the new state to config
+                    if (ClientSpoofer.CONFIG_FILE != null) {
+                        ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+                    }
+                }
+        ).bounds(10, 10, 150, 20).build());
+
+
+        // Category Tabs
         addRenderableWidget(Button.builder(Component.literal(Category.HIDDEN.title), _ -> switchCategory(Category.HIDDEN))
                 .bounds(startX, 10, buttonWidth, 20).build());
         addRenderableWidget(Button.builder(Component.literal(Category.EDITED.title), _ -> switchCategory(Category.EDITED))
@@ -53,12 +73,10 @@ public class WidgetRestoreScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal(Category.DELETED.title), _ -> switchCategory(Category.DELETED))
                 .bounds(startX + (buttonWidth + spacing) * 2, 10, buttonWidth, 20).build());
 
-        // The Scrollable List
         restoreList = new RestoreList(minecraft, this.width, this.height - 80, 40);
         addRenderableWidget(restoreList);
         refreshList();
 
-        // Bottom Done Button
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), _ -> onClose())
                 .bounds(this.width / 2 - 100, this.height - 30, 200, 20).build());
     }
@@ -76,8 +94,8 @@ public class WidgetRestoreScreen extends Screen {
             case DELETED -> ClientSpooferOptions.DELETED_WIDGETS;
         };
 
-        for (String widgetName : targetSet) {
-            restoreList.addEntry(new RestoreEntry(widgetName, currentCategory));
+        for (String uniqueId : targetSet) {
+            restoreList.addEntry(new RestoreEntry(uniqueId, currentCategory));
         }
     }
 
@@ -87,55 +105,67 @@ public class WidgetRestoreScreen extends Screen {
         super.onClose();
     }
 
-    // ==========================================
-    // INNER CLASSES FOR THE LIST
-    // ==========================================
     private class RestoreList extends AbstractSelectionList<RestoreEntry> {
         public RestoreList(Minecraft minecraft, int width, int height, int y) {
-            super(minecraft, width, height, y, 45); // 45 is the height of each row
+            super(minecraft, width, height, y, 45);
+        }
+
+        @Override
+        public void clearEntries() {
+            super.clearEntries();
+        }
+
+        @Override
+        public int addEntry(@NotNull RestoreEntry entry) {
+            return super.addEntry(entry);
         }
 
         @Override
         protected void updateWidgetNarration(@NonNull NarrationElementOutput output) {}
 
         @Override
-        protected int addEntry(@NonNull RestoreEntry entry) {
-            return super.addEntry(entry);
-        }
-
-        @Override
-        protected void clearEntries() {
-            super.clearEntries();
-        }
-
-        @Override
-        public int getRowWidth() {
-            return 300; // Width of the bordered boxes
-        }
+        public int getRowWidth() { return 300; }
     }
 
     private class RestoreEntry extends ContainerObjectSelectionList.Entry<RestoreEntry> {
-        private final String widgetName;
+        private final String uniqueId;
+        private final String displayScreen;
+        private final String displayWidget;
         private final Category category;
         private final Button resetButton;
         private final int borderColor;
 
-        public RestoreEntry(String widgetName, Category category) {
-            this.widgetName = widgetName;
+        public RestoreEntry(String uniqueId, Category category) {
+            this.uniqueId = uniqueId;
             this.category = category;
 
-            // Generate a random solid color for the border (max opacity)
+            if (uniqueId.contains(":")) {
+                String[] parts = uniqueId.split(":", 2);
+                this.displayScreen = parts[0];
+                this.displayWidget = parts[1];
+            } else {
+                this.displayScreen = "Global / Legacy";
+                this.displayWidget = uniqueId;
+            }
+
             Random random = new Random();
             this.borderColor = 0xFF000000 | random.nextInt(0xFFFFFF);
 
             this.resetButton = Button.builder(Component.literal("Reset"), _ -> {
-                // Remove the widget from the respective config map/set
-                if (category == Category.HIDDEN) ClientSpooferOptions.HIDDEN_WIDGETS.remove(widgetName);
-                else if (category == Category.DELETED) ClientSpooferOptions.DELETED_WIDGETS.remove(widgetName);
-                else if (category == Category.EDITED) ClientSpooferOptions.CUSTOM_BOUNDS.remove(widgetName);
+                if (category == Category.HIDDEN) ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
+                else if (category == Category.DELETED) ClientSpooferOptions.DELETED_WIDGETS.remove(uniqueId);
+                else if (category == Category.EDITED) ClientSpooferOptions.CUSTOM_BOUNDS.remove(uniqueId);
 
-                // Save instantly and refresh the screen
                 if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
+
+                // Tie the reset button's recalculation to the toggle as well
+                if (ClientSpooferOptions.AUTO_RECALCULATE_UI && WidgetRestoreScreen.this.previous != null && WidgetRestoreScreen.this.minecraft != null) {
+                    WidgetRestoreScreen.this.previous.resize(
+                            WidgetRestoreScreen.this.width,
+                            WidgetRestoreScreen.this.height
+                    );
+                }
+
                 refreshList();
             }).bounds(0, 0, 60, 20).build();
         }
@@ -152,16 +182,12 @@ public class WidgetRestoreScreen extends Screen {
             int width = 300;
             int height = 40;
 
-            // Draw the random colored border
             graphics.outline(x, y, width, height, borderColor);
-            // Optional: Draw a faint background inside the border so it's easier to read
             graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0x55000000);
 
-            // Draw the Texts
-            graphics.text(minecraft.font, "Screen: Unknown (Requires Tracker Update)", x + 5, y + 5, 0xFFAAAAAA);
-            graphics.text(minecraft.font, "Widget: " + widgetName, x + 5, y + 20, 0xFFFFFFFF);
+            graphics.text(minecraft.font, "Screen: " + displayScreen, x + 5, y + 5, 0xFFAAAAAA);
+            graphics.text(minecraft.font, "Widget: " + displayWidget, x + 5, y + 20, 0xFFFFFFFF);
 
-            // Update button position and draw it
             resetButton.setPosition(x + width - 65, y + 10);
             resetButton.extractRenderState(graphics, mouseX, mouseY, delta);
         }
