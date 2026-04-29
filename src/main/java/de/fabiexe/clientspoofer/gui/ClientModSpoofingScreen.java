@@ -57,7 +57,7 @@ public class ClientModSpoofingScreen extends Screen {
         }).bounds(this.width / 2 - 100, 5, 200, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("Manage Custom UI"), _ -> {
-            minecraft.setScreen(new WidgetRestoreScreen(this));
+            minecraft.setScreenAndShow(new WidgetRestoreScreen(this));
         }).bounds(this.width - 160, 5, 150, 20).build());
 
         // ==========================================
@@ -140,7 +140,7 @@ public class ClientModSpoofingScreen extends Screen {
             ClientSpooferOptions.onConfigChanged.run();
         }
 
-        Minecraft.getInstance().setScreen(previous);
+        Minecraft.getInstance().setScreenAndShow(previous);
         super.onClose();
     }
 

@@ -53,8 +53,8 @@ public class MixinMouseHandler {
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
                             // -> RECALCULATE UI <-
-                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.screen != null) {
-                                ((ScreenAccessor) client.screen).clientspoofer$invokeRebuildWidgets();
+                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.gui.screen() != null) {
+                                ((ScreenAccessor) client.gui.screen()).clientspoofer$invokeRebuildWidgets();
                             }
 
                         } else if (mouseY < my + 40) {
@@ -63,8 +63,8 @@ public class MixinMouseHandler {
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
                             // -> RECALCULATE UI <-
-                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.screen != null) {
-                                client.screen.resize(client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
+                            if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.gui.screen() != null) {
+                                client.gui.screen().resize(client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
                             }
                         }
                     }

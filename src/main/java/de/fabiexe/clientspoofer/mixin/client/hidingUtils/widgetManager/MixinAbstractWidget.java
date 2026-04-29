@@ -76,7 +76,7 @@ public abstract class MixinAbstractWidget {
 
         // If a menu is supposed to be open...
         if (ClientSpooferOptions.ACTIVE_MENU_OWNER != null) {
-            Screen screen = Minecraft.getInstance().screen;
+            Screen screen = Minecraft.getInstance().gui.screen();
             if (screen != null) {
                 List<AbstractWidget> widgets = Screens.getWidgets(screen);
 

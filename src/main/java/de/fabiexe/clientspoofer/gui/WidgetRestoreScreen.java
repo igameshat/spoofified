@@ -101,7 +101,7 @@ public class WidgetRestoreScreen extends Screen {
 
     @Override
     public void onClose() {
-        Minecraft.getInstance().setScreen(previous);
+        Minecraft.getInstance().setScreenAndShow(previous);
         super.onClose();
     }
 
@@ -159,7 +159,7 @@ public class WidgetRestoreScreen extends Screen {
                 if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
                 // Tie the reset button's recalculation to the toggle as well
-                if (ClientSpooferOptions.AUTO_RECALCULATE_UI && WidgetRestoreScreen.this.previous != null && WidgetRestoreScreen.this.minecraft != null) {
+                if (ClientSpooferOptions.AUTO_RECALCULATE_UI && WidgetRestoreScreen.this.previous != null) {
                     WidgetRestoreScreen.this.previous.resize(
                             WidgetRestoreScreen.this.width,
                             WidgetRestoreScreen.this.height

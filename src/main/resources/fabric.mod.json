@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Client Spoofer",
   "description": "This mod hides your client name and your mod list from servers.",
-  "authors": ["Fabi.exe"],
+  "authors": ["Fabi.exe","infinitygames"],
   "contact": {
     "sources": "https://github.com/FabiPunktExe/ClientSpoofer",
     "issues": "https://github.com/FabiPunktExe/ClientSpoofer/issues"
@@ -21,7 +21,7 @@
   "mixins": ["clientspoofer.mixins.json"],
   "depends": {
     "fabricloader": "*",
-    "minecraft": "~${minecraft_version}"
+    "minecraft": "~26.2-alpha.5"
   },
   "recommends": {
     "modmenu": ">=${modmenu_version}"

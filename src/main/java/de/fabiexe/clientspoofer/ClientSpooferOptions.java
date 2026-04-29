@@ -49,7 +49,7 @@ public class ClientSpooferOptions {
     }
 
     public static boolean isProtectedScreen() {
-        Screen currentScreen = Minecraft.getInstance().screen;
+        Screen currentScreen = Minecraft.getInstance().gui.screen();
         if (currentScreen == null) return false;
         String name = currentScreen.getClass().getSimpleName();
         return name.equals("ClientSpooferOptionsScreen") ||
@@ -176,7 +176,7 @@ public class ClientSpooferOptions {
 
     public static String getWidgetId(AbstractWidget widget) {
         String buttonText = widget.getMessage().getString().trim();
-        Screen currentScreen = Minecraft.getInstance().screen;
+        Screen currentScreen = Minecraft.getInstance().gui.screen();
 
         // If there's no screen (rare), just use the text
         if (currentScreen == null) return buttonText;

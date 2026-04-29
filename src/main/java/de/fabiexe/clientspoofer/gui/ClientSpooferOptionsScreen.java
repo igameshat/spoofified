@@ -155,7 +155,7 @@ public class ClientSpooferOptionsScreen extends Screen {
         // ==========================================
         widgets.add(Button.builder(Component.literal("Configure Hidden Mods..."), _ -> {
             ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
-            this.minecraft.setScreen(new ClientModSpoofingScreen(this));
+            this.minecraft.setScreenAndShow(new ClientModSpoofingScreen(this));
         }).size(200, 20).build());
 
         // Done
@@ -175,7 +175,7 @@ public class ClientSpooferOptionsScreen extends Screen {
     @Override
     public void onClose() {
         ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
-        Minecraft.getInstance().setScreen(previous);
+        Minecraft.getInstance().setScreenAndShow(previous);
     }
 
     private void fillModAllowList() {

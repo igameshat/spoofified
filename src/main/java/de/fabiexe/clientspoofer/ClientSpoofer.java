@@ -1,5 +1,6 @@
 package de.fabiexe.clientspoofer;
 
+import de.fabiexe.clientspoofer.gui.ClientSpooferOptionsScreen;
 import net.fabricmc.api.ClientModInitializer;
 
 import java.nio.file.Path;
@@ -55,9 +56,6 @@ public class ClientSpoofer implements ClientModInitializer {
                             ClientSpooferOptions.onConfigChanged.run();
                         }
 
-                        // ==========================================
-                        // THE SILENT MEMORY WIPE (No Server Spam)
-                        // ==========================================
                         if (Minecraft.getInstance().getConnection() != null) {
                             var connectionDispatcher = Minecraft.getInstance().getConnection().getCommands();
                             var root = connectionDispatcher.getRoot();
@@ -125,6 +123,13 @@ public class ClientSpoofer implements ClientModInitializer {
                                     return 1;
                                 })
                         )
+                );
+                commandNode.then(literal("open")
+                        .then(literal("options"))
+                                .executes(_ -> {
+                                    Minecraft.getInstance().setScreenAndShow(new ClientSpooferOptionsScreen(Minecraft.getInstance().gui.screen()));
+                                    return 1;
+                                })
                 );
             }
 
