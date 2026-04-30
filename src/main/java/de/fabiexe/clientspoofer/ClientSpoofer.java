@@ -27,7 +27,8 @@ public class ClientSpoofer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        CONFIG_FILE = Minecraft.getInstance().gameDirectory.toPath().resolve("config/clientspoofer.json");
+        Minecraft client = Minecraft.getInstance();
+        CONFIG_FILE = client.gameDirectory.toPath().resolve("config/clientspoofer.json");
         ClientSpooferOptions.load(CONFIG_FILE);
 
         SuggestionProvider<FabricClientCommandSource> suggestHideableMods = (_, builder) -> SharedSuggestionProvider.suggest(
@@ -56,8 +57,8 @@ public class ClientSpoofer implements ClientModInitializer {
                             ClientSpooferOptions.onConfigChanged.run();
                         }
 
-                        if (Minecraft.getInstance().getConnection() != null) {
-                            var connectionDispatcher = Minecraft.getInstance().getConnection().getCommands();
+                        if (client.getConnection() != null) {
+                            var connectionDispatcher = client.getConnection().getCommands();
                             var root = connectionDispatcher.getRoot();
 
                             try {
@@ -125,11 +126,10 @@ public class ClientSpoofer implements ClientModInitializer {
                         )
                 );
                 commandNode.then(literal("open")
-                        .then(literal("options"))
-                                .executes(_ -> {
-                                    Minecraft.getInstance().setScreenAndShow(new ClientSpooferOptionsScreen(Minecraft.getInstance().gui.screen()));
-                                    return 1;
-                                })
+                        .executes(_ -> {
+                            client.execute(() -> client.setScreenAndShow(new ClientSpooferOptionsScreen(null)));
+                            return 1;
+                        })
                 );
             }
 
