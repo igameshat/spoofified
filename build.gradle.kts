@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.minotaur)
 }
 
-group = "de.fabiexe"
+group = "com.swaphat"
 version = "2.1.0"
 
 repositories {
@@ -40,6 +40,6 @@ tasks {
     }
 
     jar {
-        archiveBaseName = "ClientSpoofer-${libs.versions.minecraft.get()}"
+        archiveBaseName = "Spoofified-${libs.versions.minecraft.get()}"
     }
 }

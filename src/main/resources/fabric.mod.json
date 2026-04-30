@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "clientspoofer",
+  "id": "spoofified",
   "version": "${version}",
   "name": "Client Spoofer",
-  "description": "This mod hides your client name and your mod list from servers.",
-  "authors": ["Fabi.exe","infinitygames"],
+  "description": "This mod grants you the ability to hide your personal  info",
+  "authors": ["Fabi.exe","Infinitygames"],
   "contact": {
-    "sources": "https://github.com/FabiPunktExe/ClientSpoofer",
-    "issues": "https://github.com/FabiPunktExe/ClientSpoofer/issues"
+    "sources": "https://github.com/igameshat/spoofified",
+    "issues": "https://github.com/igameshat/spoofified/issues"
   },
   "license": "MIT",
-  "icon": "assets/clientspoofer/icon.png",
+  "icon": "assets/spoofified/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["de.fabiexe.clientspoofer.ClientSpoofer"],
-    "preLaunch": ["de.fabiexe.clientspoofer.ClientSpooferPreLaunch"],
-    "modmenu": ["de.fabiexe.clientspoofer.integration.ModMenuIntegration"]
+    "client": ["com.swaphat.spoofified.ClientSpoofer"],
+    "preLaunch": ["com.swaphat.spoofified.ClientSpooferPreLaunch"],
+    "modmenu": ["com.swaphat.spoofified.integration.ModMenuIntegration"]
 
   },
-  "mixins": ["clientspoofer.mixins.json"],
+  "mixins": ["spoofified.mixins.json"],
   "depends": {
     "fabricloader": "*",
     "minecraft": "~26.2-alpha.5"

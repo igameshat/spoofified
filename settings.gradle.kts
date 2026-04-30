@@ -1,4 +1,4 @@
-rootProject.name = "ClientSpoofer"
+rootProject.name = "Spoofified"
 
 pluginManagement {
     repositories {
