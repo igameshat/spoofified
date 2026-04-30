@@ -1,70 +1,55 @@
-# spoofified
+# Spoofified
 
 > A Minecraft Fabric mod that completely spoofs your client identity and mod list to hide your presence from multiplayer servers.
 
-## Overview
+## What's This About?
 
-**spoofified** is a fork of [ClientSpoofer](https://github.com/FabiPunktExe/clientspoofer) by FabiPunktExe—a client-sided mod designed to achieve 100% client spoofing. It protects your privacy by intercepting and modifying network packets, preventing servers from detecting your client type, installed mods, resource packs, and other identifying information.
+Ever joined a server and instantly got kicked because you had mods installed? Or you're worried some server is logging what mods you run? Yeah, that sucks. 
 
-## Features
+**Spoofified** lets you play on servers however you want without them knowing what you're actually running. Want to hide all your mods? Done. Want to show a few but hide the problematic ones? You can do that too. Make your client pretend to be vanilla, Fabric, Lunar, whatever—it's all configurable.
 
-### 1. **Client Brand Spoofing**
-Disguises your Minecraft client by modifying the client brand identifier sent to servers.
+The best part? It's all client-side. No server patches needed, no sketchy workarounds. Just pure client spoofing.
 
-**Spoof Modes:**
-- **VANILLA** - Reports as vanilla Minecraft client
-- **MODDED** - Reports as Fabric (with selective mod hiding)
-- **CUSTOM** - Reports as a custom client name of your choice
-- **OFF** - Disables all spoofing
+## What Can You Actually Do?
 
-**Example Use Case:**
-> Connect to anti-cheat servers that detect modded clients. A server checking your client brand will see "vanilla" instead of your actual client, preventing automatic kicks.
+### Hide Your Mods
+Servers can't see what you're running. Full stop. When they ask, your client tells them nothing (or only what you want them to know).
 
-### 2. **Custom Payload Packet Filtering**
-Blocks custom payload packets sent to servers that may contain mod identification data.
+### Spoof Your Client Brand
+Make Minecraft think you're running vanilla, Fabric, or literally any other client. Some servers check this first—now they'll see whatever you tell them to.
 
-**How it works:**
-- Intercepts all `ServerboundCustomPayloadPacket` before sending to server
-- In VANILLA mode: Blocks all custom payloads (except brand payload)
-- In MODDED mode: Allows whitelisted mods while blocking others
-- In CUSTOM mode: Blocks payloads unless explicitly allowed
-- Configurable allowed channels via JSON config
+### Block Mod Identification Packets
+Mods send packets to servers to announce themselves. This blocks all that noise before it even leaves your computer. Servers won't know you're running anything at all.
 
-**Example Use Case:**
-> Fabric mods often send custom packets that identify themselves (e.g., "fabric:register", "modname:data"). These packets are silently dropped, making mod detection impossible for servers scanning network traffic.
+### Stop Servers From Fingerprinting You
+Advanced servers try multiple detection methods at once: checking your brand, scanning packets, looking at pack IDs, analyzing UI elements. This mod stops all of it.
 
-### 3. **Translation Exploit Protection**
-Fixes an advanced server exploit where servers inject custom text into signs and anvil screens containing mod names encoded in special formatting.
+There's this nasty exploit where servers inject hidden text into signs and anvils to trick you into revealing your mods. Spoofified strips that out and shows you a notification when a server tries it.
 
-**How it works:**
-- Intercepts sign and anvil UI component rendering
-- Uses sophisticated language parsing to detect when servers attempt to inject translatable text
-- Converts malicious formatted text to plaintext, stripping out server-injected mod identification
-- Shows a toast notification when a server attempts this exploit
+### Keep Your Keybinds Hidden
+If you hide a mod, its keybinds get hidden too. No accidental reveals in the controls menu.
 
-**Example Use Case:**
-> A server like HugoSMP could place a sign with hidden text that reads `{"translate":"modname.loaded"}`. When you look at the sign, it would reveal your installed mods. This feature strips that information before it reaches your client.
+## Getting Started
 
-### 4. **Known Packs Manager Spoofing**
-Hides Fabric-related resource packs and mod packs from server detection.
+### Requirements
+- Minecraft 1.21+
+- Java 21+
+- Fabric loader
+- (Optional) Mod Menu for the GUI config
 
-**How it works:**
-- Intercepts the `KnownPacksManager.trySelectingPacks()` method
-- Prevents servers from identifying Fabric packs unless whitelisted
-- Maintains functionality for whitelisted mods and vanilla packs
-
-**Example Use Case:**
-> Servers can query which packs your client recognizes. By hiding Fabric pack identifiers, the server can't determine if you're running a modded client vs vanilla.
-
-### 5. **Fingerprinting Prevention**
-Advanced protection against creative server attempts to identify your client through multiple detection vectors simultaneously.
-
-**Example Use Case:**
-> Anti-cheat systems might try multiple detection methods: checking brand, scanning packets, reading pack IDs, and analyzing UI components. Fingerprinting prevention ensures all vectors are blocked consistently.
+### Installation
+1. Grab the latest JAR from [Releases](https://github.com/igameshat/spoofified/releases)
+2. Drop it in `.minecraft/mods`
+3. Launch the game
+4. Configure it
 
 ## Configuration
 
-The mod is configured via `config/clientspoofer.json`:
+### The Easy Way
+If you have Mod Menu installed, just open it, find Client Spoofer, hit the config button, and adjust whatever you want. It saves automatically.
+
+### The Manual Way
+Edit `config/clientspoofer.json`:
 
 ```json
 {
@@ -78,55 +63,27 @@ The mod is configured via `config/clientspoofer.json`:
 }
 ```
 
-**Configuration Options:**
+**spoof-mode** - How you want to present yourself:
+- `vanilla` - Look like plain Minecraft
+- `modded` - Say you're on Fabric but hide certain mods
+- `custom` - Pretend to be any client you want
+- `off` - Don't spoof anything
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `spoof-mode` | string | `vanilla` | Spoofing mode: `vanilla`, `modded`, `custom`, or `off` |
-| `custom-client` | string | `fabric` | Custom client name to report in CUSTOM mode |
-| `hide-mods` | boolean | `true` | Whether to hide mods in CUSTOM mode |
-| `disable-custom-payloads` | boolean | `true` | Block custom payload packets in CUSTOM mode |
-| `prevent-fingerprinting` | boolean | `true` | Enable advanced fingerprinting protection |
-| `allowed-mods` | array | `[]` | List of mod names to allow (in MODDED mode) |
-| `allowed-custom-payload-channels` | array | `[]` | Custom payload channels to allow (in CUSTOM mode) |
+**custom-client** - What name to use in CUSTOM mode (e.g., "lunar", "badlion")
 
-## Tested Servers
+**hide-mods** - Whether to hide your mod list
 
-- **Cytooxien** (`cytooxien.de`)
-- **HugoSMP** (`hugosmp.net`)
-- **DonutSMP** (`donutsmp.net`)
+**disable-custom-payloads** - Block those mod announcement packets
 
-> These servers are known to use client detection. spoofified successfully prevents detection on them.
+**prevent-fingerprinting** - Protect against all the weird detection tricks
 
-## Installation
+**allowed-mods** - In MODDED mode, list which mods you want to allow (e.g., `["sodium", "iris"]`)
 
-### Requirements
-- **Minecraft Version**: 1.21+ (Java 21+)
-- **Modloader**: Fabric
-- **Optional**: Mod Menu (for GUI configuration)
+**allowed-custom-payload-channels** - In CUSTOM mode, which packet channels are allowed through
 
-### Steps
-1. Download the latest JAR from [Releases](https://github.com/igameshat/spoofified/releases)
-2. Place in your `.minecraft/mods` folder
-3. Launch Minecraft with Fabric
-4. (Optional) Configure via `config/clientspoofer.json` or use Mod Menu GUI
+## Real-World Scenarios
 
-## Technical Implementation
-
-The mod uses **Mixin** bytecode manipulation to intercept Minecraft internals:
-
-| Mixin Target | Purpose |
-|---|---|
-| `ClientBrandRetrieverMixin` | Spoofs `getClientModName()` return value |
-| `ConnectionMixin` | Filters outgoing custom payload packets |
-| `AbstractSignEditScreenMixin` | Strips server-injected mod identifiers from signs |
-| `AnvilScreenMixin` | Strips server-injected mod identifiers from anvils |
-| `KnownPacksManagerMixin` | Hides Fabric pack identifiers |
-| `DownloadQueueMixin` | Prevents pack download detection |
-
-## Advanced Scenarios
-
-### Scenario 1: Pure Vanilla Appearance
+### "I Just Want to Look Vanilla"
 ```json
 {
   "spoof-mode": "vanilla",
@@ -135,19 +92,19 @@ The mod uses **Mixin** bytecode manipulation to intercept Minecraft internals:
   "prevent-fingerprinting": true
 }
 ```
-Perfect for servers with strict anti-cheat that ban any non-vanilla client.
+Use this on servers with strict anti-cheat. You'll look 100% vanilla.
 
-### Scenario 2: Selective Mod Compatibility
+### "I Want My Performance Mods But Hide Everything Else"
 ```json
 {
   "spoof-mode": "modded",
-  "allowed-mods": ["optifine", "sodium", "iris"],
+  "allowed-mods": ["sodium", "iris", "optifine"],
   "prevent-fingerprinting": true
 }
 ```
-Hide problematic mods while allowing performance/compatibility mods that servers don't care about.
+Servers see you're on Fabric and that you have a few safe mods, but nothing else.
 
-### Scenario 3: Custom Client Branding
+### "I Want to Look Like I'm Using Lunar"
 ```json
 {
   "spoof-mode": "custom",
@@ -156,26 +113,53 @@ Hide problematic mods while allowing performance/compatibility mods that servers
   "allowed-custom-payload-channels": ["lunar:receive"]
 }
 ```
-Spoof as a specific client while maintaining limited functionality through whitelisted channels.
+Now you're a "lunar client" as far as the server cares.
+
+## Tested On
+- Cytooxien
+- HugoSMP  
+- DonutSMP
+
+These servers actually use detection. Spoofified works on all of them.
+
+## How It Actually Works
+
+The mod uses Mixin to hook into Minecraft's internals and intercept the stuff servers use to detect you:
+
+- **ClientBrandRetrieverMixin** - Changes what your client brand says
+- **ConnectionMixin** - Filters outgoing packets before they're sent
+- **AbstractSignEditScreenMixin** & **AnvilScreenMixin** - Strips malicious text servers try to inject
+- **KnownPacksManagerMixin** - Hides Fabric pack signatures
+- **MixinModMain** - Hides mods from Mod Menu
+- **MixinKeyBindsList** - Removes keybinds from hidden mods
+
+Everything happens client-side. No external tools. No sketchy stuff.
+
+## Important: Read This
+
+This mod is for **privacy** and **avoiding detection**. Use it responsibly:
+
+**Don't use it to:**
+- Break server rules (check their ToS)
+- Cheat or gain unfair advantages
+- Mess with servers' security systems
+
+**Safe to use for:**
+- Protecting your privacy on community/friend servers
+- Using performance mods on servers that don't explicitly ban them
+- Keeping your setup private
+
+**Real talk:** This mod only hides client info. Servers might have other detection methods we don't know about. They could also add more detection later. Use it knowing that, and don't cry if something breaks.
 
 ## License
 
 MIT License © 2026
 
-## Disclaimer
-
-This mod is provided for privacy protection purposes. Use responsibly:
-- Some servers may prohibit mod usage—check their Terms of Service
-- This mod does NOT provide cheating capabilities; it only hides client information
-- Server administrators may implement additional detection methods not covered by this mod
-- Use at your own discretion and assume responsibility for any consequences
-
 ## Credits
 
-- **Original Author**: [FabiPunktExe](https://github.com/FabiPunktExe/clientspoofer)
-- **Forked by**: [igameshat](https://github.com/igameshat)
-- **Modding Framework**: Fabric, Mixin
+- Original mod by [FabiPunktExe](https://github.com/FabiPunktExe/clientspoofer)
+- Forked and maintained by [igameshat](https://github.com/igameshat)
 
 ---
 
-**Repository**: https://github.com/igameshat/spoofified
+Got questions? Issues? Open a GitHub issue and let me know what's up.
