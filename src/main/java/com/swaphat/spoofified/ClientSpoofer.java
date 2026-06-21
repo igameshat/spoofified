@@ -99,7 +99,8 @@ public class ClientSpoofer implements ClientModInitializer {
                                     String modid = StringArgumentType.getString(ctx, "modid");
                                     if (ClientSpooferOptions.HIDDEN_MODS.add(modid)) {
                                         ClientSpooferOptions.save(CONFIG_FILE);
-                                        if(ClientSpooferOptions.onConfigChanged != null) ClientSpooferOptions.onConfigChanged.run();
+                                        if (ClientSpooferOptions.onConfigChanged != null)
+                                            ClientSpooferOptions.onConfigChanged.run();
                                         ctx.getSource().sendFeedback(Component.literal("[Spoofified] Added to hidden mods: " + modid));
                                     } else {
                                         ctx.getSource().sendError(Component.literal("[Spoofified] Mod is already hidden: " + modid));
@@ -116,7 +117,8 @@ public class ClientSpoofer implements ClientModInitializer {
                                     String modid = StringArgumentType.getString(ctx, "modid");
                                     if (ClientSpooferOptions.HIDDEN_MODS.remove(modid)) {
                                         ClientSpooferOptions.save(CONFIG_FILE);
-                                        if(ClientSpooferOptions.onConfigChanged != null) ClientSpooferOptions.onConfigChanged.run();
+                                        if (ClientSpooferOptions.onConfigChanged != null)
+                                            ClientSpooferOptions.onConfigChanged.run();
                                         ctx.getSource().sendFeedback(Component.literal("[Spoofified] Removed from hidden mods: " + modid));
                                     } else {
                                         ctx.getSource().sendError(Component.literal("[Spoofified] Mod was not hidden: " + modid));
