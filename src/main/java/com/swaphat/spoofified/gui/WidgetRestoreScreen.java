@@ -3,7 +3,7 @@ package com.swaphat.spoofified.gui;
 import com.swaphat.spoofified.ClientSpoofer;
 import com.swaphat.spoofified.ClientSpooferOptions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -176,20 +176,20 @@ public class WidgetRestoreScreen extends Screen {
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float delta) {
+        public void renderContent(@NonNull GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
             int x = getContentX();
             int y = getContentY();
             int width = 300;
             int height = 40;
 
-            graphics.outline(x, y, width, height, borderColor);
+            graphics.renderOutline(x, y, width, height, borderColor);
             graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0x55000000);
 
-            graphics.text(minecraft.font, "Screen: " + displayScreen, x + 5, y + 5, 0xFFAAAAAA);
-            graphics.text(minecraft.font, "Widget: " + displayWidget, x + 5, y + 20, 0xFFFFFFFF);
+            graphics.drawString(minecraft.font, "Screen: " + displayScreen, x + 5, y + 5, 0xFFAAAAAA);
+            graphics.drawString(minecraft.font, "Widget: " + displayWidget, x + 5, y + 20, 0xFFFFFFFF);
 
             resetButton.setPosition(x + width - 65, y + 10);
-            resetButton.extractRenderState(graphics, mouseX, mouseY, delta);
+            resetButton.render(graphics, mouseX, mouseY, delta);
         }
 
         @Override

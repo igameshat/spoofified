@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(GridLayout.RowHelper.class)
 public class MixinGridLayout {
 
-    @Inject(method = "addChild(Lnet/minecraft/client/gui/layouts/LayoutElement;ILnet/minecraft/client/gui/layouts/LayoutSettings;)Lnet/minecraft/client/gui/layouts/LayoutElement;", at = @At("HEAD"), cancellable = true)
-    private void clientspoofer$skipDeletedGridItems(LayoutElement widget, int columnWidth, LayoutSettings layoutSettings, CallbackInfoReturnable<LayoutElement> cir) {
+    @Inject(method = "addChild(Lnet/minecraft/client/gui/layouts/LayoutElement;ILnet/minecraft/client/gui/layouts/LayoutSettings;)Lnet/minecraft/client/gui/layouts/LayoutElement;", at = @At("HEAD"), cancellable = true)    private void clientspoofer$skipDeletedGridItems(LayoutElement widget, int columnWidth, LayoutSettings layoutSettings, CallbackInfoReturnable<LayoutElement> cir) {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
         if (widget instanceof AbstractWidget abstractWidget) {

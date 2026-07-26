@@ -3,7 +3,7 @@
   "id": "spoofified",
   "version": "${version}",
   "name": "Client Spoofer",
-  "description": "This mod grants you the ability to hide your personal  info",
+  "description": "This mod grants you the ability to hide your personal info",
   "authors": ["Fabi.exe","Infinitygames"],
   "contact": {
     "sources": "https://github.com/igameshat/spoofified",
@@ -21,7 +21,7 @@
   "mixins": ["spoofified.mixins.json"],
   "depends": {
     "fabricloader": "*",
-    "minecraft": "~26.2-alpha.5"
+    "minecraft": "~1.21.11"
   },
   "recommends": {
     "modmenu": ">=${modmenu_version}"

@@ -12,9 +12,10 @@ repositories {
 
 dependencies {
     minecraft(libs.minecraft)
-    implementation(libs.fabric.loader)
-    implementation(libs.fabric.api)
-    compileOnly(libs.modmenu)
+    add("mappings", loom.officialMojangMappings())
+    add("modImplementation", libs.fabric.loader)
+    add("modImplementation", libs.fabric.api)
+    add("modCompileOnly", libs.modmenu)
 }
 
 java {

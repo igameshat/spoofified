@@ -2,6 +2,7 @@ package com.swaphat.spoofified.mixin.client.hidingUtils;
 
 import com.swaphat.spoofified.ClientSpoofer;
 import com.swaphat.spoofified.ClientSpooferOptions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.network.chat.Component;
@@ -58,7 +59,7 @@ public abstract class MixinLanguageManager {
             // 7. STEALTH FEEDBACK
             System.out.println("[Spoofified] Recovery Triggered: Restoring " + previousLanguage);
             if (client.player != null) {
-                client.player.sendSystemMessage(Component.literal("§c[Spoofified] System Recovered."));
+                client.player.displayClientMessage(Component.literal("[Spoofified] System Recovered.").withStyle(ChatFormatting.RED), false);
             }
         }
     }

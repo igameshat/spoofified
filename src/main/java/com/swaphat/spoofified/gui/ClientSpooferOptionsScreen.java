@@ -7,7 +7,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -242,9 +242,9 @@ public class ClientSpooferOptionsScreen extends Screen {
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float delta) {
+        public void renderContent(@NonNull GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float delta) {
             checkbox.setPosition(getContentX() + 11, getContentY());
-            checkbox.extractContents(graphics, mouseX, mouseY, delta);
+            checkbox.renderContents(graphics, mouseX, mouseY, delta);
         }
 
         @Override

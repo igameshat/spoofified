@@ -9,17 +9,16 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class ClientSpoofer implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("spoofified");
@@ -31,7 +30,7 @@ public class ClientSpoofer implements ClientModInitializer {
         CONFIG_FILE = client.gameDirectory.toPath().resolve("config/spoofified.json");
         ClientSpooferOptions.load(CONFIG_FILE);
 
-        SuggestionProvider<FabricClientCommandSource> suggestHideableMods = (_, builder) -> SharedSuggestionProvider.suggest(
+        SuggestionProvider<FabricClientCommandSource> suggestHideableMods = (context, builder) -> SharedSuggestionProvider.suggest(
                 FabricLoader.getInstance().getAllMods().stream()
                         .map(mod -> mod.getMetadata().getId())
                         .filter(id -> !ClientSpooferOptions.HIDDEN_MODS.contains(id))
@@ -39,15 +38,15 @@ public class ClientSpoofer implements ClientModInitializer {
                 builder
         );
 
-        SuggestionProvider<FabricClientCommandSource> suggestRevealableMods = (_, builder) -> SharedSuggestionProvider.suggest(
+        SuggestionProvider<FabricClientCommandSource> suggestRevealableMods = (context, builder) -> SharedSuggestionProvider.suggest(
                 ClientSpooferOptions.HIDDEN_MODS,
                 builder
         );
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 
-            var commandNode = literal("..")
-                    .requires(_ -> !ClientSpooferOptions.PANIC_MODE)
+            var commandNode = ClientCommandManager.literal("..")
+                    .requires(source -> !ClientSpooferOptions.PANIC_MODE) // Replaced '_'
                     .executes(ctx -> {
                         ClientSpooferOptions.PANIC_MODE = true;
                         ClientSpooferOptions.ENABLED = false;
@@ -62,12 +61,10 @@ public class ClientSpoofer implements ClientModInitializer {
                             var root = connectionDispatcher.getRoot();
 
                             try {
-                                // 1. Force access to the locked 'children' map and delete the command
                                 java.lang.reflect.Field childrenField = com.mojang.brigadier.tree.CommandNode.class.getDeclaredField("children");
                                 childrenField.setAccessible(true);
                                 ((java.util.Map<?, ?>) childrenField.get(root)).remove("..");
 
-                                // 2. Force access to the locked 'literals' map and delete the command
                                 java.lang.reflect.Field literalsField = com.mojang.brigadier.tree.CommandNode.class.getDeclaredField("literals");
                                 literalsField.setAccessible(true);
                                 ((java.util.Map<?, ?>) literalsField.get(root)).remove("..");
@@ -77,13 +74,13 @@ public class ClientSpoofer implements ClientModInitializer {
                             }
                         }
 
-                        ctx.getSource().sendFeedback(Component.literal("§c[Spoofified] Self-Destructing: Mod completely hidden."));
+                        ctx.getSource().sendFeedback(Component.literal("[Spoofified] Self-Destructing: Mod completely hidden.").withStyle(ChatFormatting.RED));
                         return 1;
                     });
 
             if (ClientSpooferOptions.ENABLED && !ClientSpooferOptions.PANIC_MODE) {
 
-                commandNode.then(argument("e", BoolArgumentType.bool())
+                commandNode.then(ClientCommandManager.argument("e", BoolArgumentType.bool())
                         .executes(ctx -> {
                             ClientSpooferOptions.ENABLED = BoolArgumentType.getBool(ctx, "e");
                             ClientSpooferOptions.save(CONFIG_FILE);
@@ -92,8 +89,8 @@ public class ClientSpoofer implements ClientModInitializer {
                         })
                 );
 
-                commandNode.then(literal("H")
-                        .then(argument("modid", StringArgumentType.word())
+                commandNode.then(ClientCommandManager.literal("H")
+                        .then(ClientCommandManager.argument("modid", StringArgumentType.word())
                                 .suggests(suggestHideableMods)
                                 .executes(ctx -> {
                                     String modid = StringArgumentType.getString(ctx, "modid");
@@ -109,8 +106,8 @@ public class ClientSpoofer implements ClientModInitializer {
                         )
                 );
 
-                commandNode.then(literal("R")
-                        .then(argument("modid", StringArgumentType.word())
+                commandNode.then(ClientCommandManager.literal("R")
+                        .then(ClientCommandManager.argument("modid", StringArgumentType.word())
                                 .suggests(suggestRevealableMods)
                                 .executes(ctx -> {
                                     String modid = StringArgumentType.getString(ctx, "modid");
@@ -125,9 +122,10 @@ public class ClientSpoofer implements ClientModInitializer {
                                 })
                         )
                 );
-                commandNode.then(literal("open")
-                        .executes(_ -> {
-                            client.execute(() -> client.setScreenAndShow(new ClientSpooferOptionsScreen(null)));
+
+                commandNode.then(ClientCommandManager.literal("open")
+                        .executes(ctx -> {
+                            client.execute(() -> client.setScreen(new ClientSpooferOptionsScreen(null)));
                             return 1;
                         })
                 );

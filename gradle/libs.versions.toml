@@ -1,13 +1,13 @@
 [versions]
-fabric-loom = "1.16.1"
-fabric-loader = "0.19.1"
-fabric-api = "0.147.1+26.2"
-minecraft = "26.2-snapshot-5"
+fabric-loom = "1.17-SNAPSHOT"
+fabric-loader = "0.19.3"
+fabric-api = "0.141.5+1.21.11"
+minecraft = "1.21.11"
 minotaur = "2.9.0"
-modmenu = "18.0.0-alpha.8"
+modmenu = "17.0.1-beta.1"
 
 [plugins]
-fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
+fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
 
 [libraries]
