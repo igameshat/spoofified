@@ -20,15 +20,13 @@ public class MixinMouseHandler {
 
     @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
     private void clientspoofer$globalClick(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
-        // THE SHIELD: Prevent spoofing logic on config screens
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
-        if (action == 1) { // 1 is GLFW_PRESS
+        if (action == 1) {
             AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
             if (owner != null) {
                 Minecraft client = Minecraft.getInstance();
 
-                // Calculate GUI Scaled Coordinates
                 double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
                 double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
 
@@ -39,12 +37,10 @@ public class MixinMouseHandler {
                 boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
 
                 if (inMainMenu) {
-                    if (rawButtonInfo.button() == 0) { // 0 is Left Click
-                        // Use Unique ID instead of raw string
+                    if (rawButtonInfo.button() == 0) {
                         String uniqueId = ClientSpooferOptions.getWidgetId(owner);
 
                         if (mouseY < my + 20) {
-                            // Toggle Hide/Reveal and Save
                             if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId)) {
                                 ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
                             } else {
@@ -52,7 +48,6 @@ public class MixinMouseHandler {
                             }
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
-                            // -> RECALCULATE UI <-
                             if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.gui.screen() != null) {
                                 ((ScreenAccessor) client.gui.screen()).clientspoofer$invokeRebuildWidgets();
                             }
@@ -62,7 +57,6 @@ public class MixinMouseHandler {
                             ClientSpooferOptions.DELETED_WIDGETS.add(uniqueId);
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
-                            // -> RECALCULATE UI <-
                             if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.gui.screen() != null) {
                                 client.gui.screen().resize(client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
                             }
@@ -72,11 +66,9 @@ public class MixinMouseHandler {
                     ci.cancel();
                 }
                 else if (inSubMenu) {
-                    // Clicks inside the sub-menu consume the event but keep it open (for scrolling)
                     ci.cancel();
                 }
                 else {
-                    // Clicked outside: Close menu
                     ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
                 }
             }
@@ -85,7 +77,6 @@ public class MixinMouseHandler {
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
     private void clientspoofer$globalScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
-        // THE SHIELD
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
         AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
@@ -97,40 +88,43 @@ public class MixinMouseHandler {
             int subX = ClientSpooferOptions.MENU_X + 80;
             int subY = ClientSpooferOptions.MENU_Y + 40;
 
-            // Check if hovering the Edit sub-menu boundaries
             if (mouseX >= subX && mouseX <= subX + 100 && mouseY >= subY && mouseY <= subY + 80) {
                 int scrollAmount = yoffset > 0 ? 1 : -1;
 
-                // Use CTRL for the 10x multiplier
                 boolean isCtrlDown = InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_RIGHT_CONTROL);
                 if (isCtrlDown) scrollAmount *= 10;
 
-                // Adjust Bounds
-                if (mouseY < subY + 20) owner.setX(owner.getX() + scrollAmount);
-                else if (mouseY < subY + 40) owner.setY(owner.getY() + scrollAmount);
-                else if (mouseY < subY + 60) owner.setWidth(owner.getWidth() + scrollAmount);
-                else {
-                    try {
-                        // Reflection fallback for setHeight (often doesn't have a public setter)
-                        for (Method m : AbstractWidget.class.getDeclaredMethods()) {
-                            if (m.getName().equals("setHeight") || m.getName().equals("m_93674_")) {
-                                m.setAccessible(true);
-                                m.invoke(owner, owner.getHeight() + scrollAmount);
-                                break;
-                            }
-                        }
-                    } catch (Exception ignored) {}
-                }
+                int newX = owner.getX();
+                int newY = owner.getY();
+                int newW = owner.getWidth();
+                int newH = owner.getHeight();
 
-                // SAVE THE NEW BOUNDS using Unique ID
+                if (mouseY < subY + 20) newX += scrollAmount;
+                else if (mouseY < subY + 40) newY += scrollAmount;
+                else if (mouseY < subY + 60) newW += scrollAmount;
+                else newH += scrollAmount;
+
+                owner.setX(newX);
+                owner.setY(newY);
+                owner.setWidth(newW);
+                try {
+                    for (Method m : AbstractWidget.class.getDeclaredMethods()) {
+                        if (m.getName().equals("setHeight") || m.getName().equals("m_93674_")) {
+                            m.setAccessible(true);
+                            m.invoke(owner, newH);
+                            break;
+                        }
+                    }
+                } catch (Exception ignored) {}
+
                 String uniqueId = ClientSpooferOptions.getWidgetId(owner);
                 ClientSpooferOptions.CUSTOM_BOUNDS.put(uniqueId, new ClientSpooferOptions.WidgetBounds(
-                        owner.getX(), owner.getY(), owner.getWidth(), owner.getHeight()
+                        newX, newY, newW, newH
                 ));
 
                 if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
-                ci.cancel(); // Stop the scroll from affecting the actual screen content
+                ci.cancel();
             }
         }
     }

@@ -37,7 +37,7 @@ public class MixinKeyBindsList {
             }
 
             for (String customKey : ClientSpooferOptions.CUSTOM_HIDDEN_KEYS) {
-                // The .trim() ensures accidental spaces don't break the hiding logic!
+                // The .trim() ensures accidental spaces don't break the hiding logic
                 String sanitizedKey = customKey.toLowerCase().trim();
                 if (!sanitizedKey.isEmpty() && (category.contains(sanitizedKey) || name.contains(sanitizedKey))) {
                     return false;

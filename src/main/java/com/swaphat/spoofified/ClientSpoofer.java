@@ -1,6 +1,7 @@
 package com.swaphat.spoofified;
 
 import com.swaphat.spoofified.gui.ClientSpooferOptionsScreen;
+import com.swaphat.spoofified.gui.LogBrowserScreen;
 import net.fabricmc.api.ClientModInitializer;
 
 import java.nio.file.Path;
@@ -82,6 +83,34 @@ public class ClientSpoofer implements ClientModInitializer {
                     });
 
             if (ClientSpooferOptions.ENABLED && !ClientSpooferOptions.PANIC_MODE) {
+
+                commandNode.then(literal("mdm")
+                        .executes(ctx -> {
+                            String modid = "spoofified"; // Change if your modid is different
+                            if (ClientSpooferOptions.HIDDEN_MODS.contains(modid)) {
+                                ClientSpooferOptions.HIDDEN_MODS.remove(modid);
+                                ctx.getSource().sendFeedback(Component.literal("§a[Spoofified] Restored in Mod Menu."));
+                            } else {
+                                ClientSpooferOptions.HIDDEN_MODS.add(modid);
+                                ctx.getSource().sendFeedback(Component.literal("§c[Spoofified] Hidden from Mod Menu."));
+                            }
+
+                            ClientSpooferOptions.save(CONFIG_FILE);
+                            if (ClientSpooferOptions.onConfigChanged != null) {
+                                ClientSpooferOptions.onConfigChanged.run();
+                            }
+                            return 1;
+                        })
+                );
+
+                commandNode.then(literal("log")
+                        .executes(ctx -> {
+                            Minecraft.getInstance().execute(() ->
+                                    Minecraft.getInstance().setScreenAndShow(new LogBrowserScreen())
+                            );
+                            return 1;
+                        })
+                );
 
                 commandNode.then(argument("e", BoolArgumentType.bool())
                         .executes(ctx -> {

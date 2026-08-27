@@ -99,11 +99,6 @@ public class WidgetRestoreScreen extends Screen {
         }
     }
 
-    @Override
-    public void onClose() {
-        Minecraft.getInstance().setScreenAndShow(previous);
-        super.onClose();
-    }
 
     private class RestoreList extends AbstractSelectionList<RestoreEntry> {
         public RestoreList(Minecraft minecraft, int width, int height, int y) {

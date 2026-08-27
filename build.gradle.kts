@@ -1,10 +1,9 @@
 plugins {
     alias(libs.plugins.fabric.loom)
-    alias(libs.plugins.minotaur)
 }
 
 group = "com.swaphat"
-version = "2.1.1"
+version = "2.2.0"
 
 repositories {
     maven("https://maven.terraformersmc.com")

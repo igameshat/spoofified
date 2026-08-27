@@ -42,7 +42,6 @@ public abstract class MixinAbstractWidget {
 
         if (ClientSpooferOptions.LOCKED_WIDGETS.contains(uniqueId)) return;
 
-        // 1. APPLY PERSISTENT EDITS
         if (ClientSpooferOptions.CUSTOM_BOUNDS.containsKey(uniqueId)) {
             ClientSpooferOptions.WidgetBounds bounds = ClientSpooferOptions.CUSTOM_BOUNDS.get(uniqueId);
             this.setX(bounds.x);
@@ -51,7 +50,6 @@ public abstract class MixinAbstractWidget {
             this.setHeight(bounds.height);
         }
 
-        // 2. DELETE CHECK
         if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
             this.setX(-5000);
             this.setY(-5000);
@@ -59,38 +57,31 @@ public abstract class MixinAbstractWidget {
             return;
         }
 
-        // 3. HIDE CHECK
         if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId)) {
             ci.cancel();
-            if (ClientSpooferOptions.ACTIVE_MENU_OWNER != (Object) this) {
-                this.setX(-5000);
-                this.setY(-5000);
-            }
         }
     }
 
-    // THE FIX: The "Hijack Trick" to ensure the menu renders on top
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void clientspoofer$drawNormalMenu(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
-        // If a menu is supposed to be open...
         if (ClientSpooferOptions.ACTIVE_MENU_OWNER != null) {
             Screen screen = Minecraft.getInstance().gui.screen();
             if (screen != null) {
                 List<AbstractWidget> widgets = Screens.getWidgets(screen);
 
-                // Find the very last visible widget on the screen
                 AbstractWidget lastVisible = null;
                 for (int i = widgets.size() - 1; i >= 0; i--) {
-                    if (widgets.get(i).visible) {
-                        lastVisible = widgets.get(i);
+                    AbstractWidget w = widgets.get(i);
+                    String id = ClientSpooferOptions.getWidgetId(w);
+
+                    if (w.visible && !ClientSpooferOptions.DELETED_WIDGETS.contains(id) && !ClientSpooferOptions.HIDDEN_WIDGETS.contains(id)) {
+                        lastVisible = w;
                         break;
                     }
                 }
 
-                // If THIS specific widget is the last one in the list, hijack it!
-                // It draws our menu after everything else is finished.
                 if (lastVisible == (Object) this) {
                     clientspoofer$drawContextMenu(graphics, ClientSpooferOptions.ACTIVE_MENU_OWNER);
                 }
