@@ -78,7 +78,7 @@ public class ClientSpoofer implements ClientModInitializer {
                             }
                         }
 
-                        ctx.getSource().sendFeedback(Component.literal("§c[Spoofified] Self-Destructing: Mod completely hidden."));
+                        ctx.getSource().sendFeedback(Component.translatable("spoofified.command.panic.self_destruct"));
                         return 1;
                     });
 
@@ -89,10 +89,10 @@ public class ClientSpoofer implements ClientModInitializer {
                             String modid = "spoofified"; // Change if your modid is different
                             if (ClientSpooferOptions.HIDDEN_MODS.contains(modid)) {
                                 ClientSpooferOptions.HIDDEN_MODS.remove(modid);
-                                ctx.getSource().sendFeedback(Component.literal("§a[Spoofified] Restored in Mod Menu."));
+                                ctx.getSource().sendFeedback(Component.translatable("spoofified.command.mdm.restored"));
                             } else {
                                 ClientSpooferOptions.HIDDEN_MODS.add(modid);
-                                ctx.getSource().sendFeedback(Component.literal("§c[Spoofified] Hidden from Mod Menu."));
+                                ctx.getSource().sendFeedback(Component.translatable("spoofified.command.mdm.hidden"));
                             }
 
                             ClientSpooferOptions.save(CONFIG_FILE);
@@ -116,7 +116,7 @@ public class ClientSpoofer implements ClientModInitializer {
                         .executes(ctx -> {
                             ClientSpooferOptions.ENABLED = BoolArgumentType.getBool(ctx, "e");
                             ClientSpooferOptions.save(CONFIG_FILE);
-                            ctx.getSource().sendFeedback(Component.literal("[Spoofified] Client Spoofer enabled: " + ClientSpooferOptions.ENABLED));
+                            ctx.getSource().sendFeedback(Component.translatable("spoofified.command.toggle", ClientSpooferOptions.ENABLED));
                             return 1;
                         })
                 );
@@ -130,9 +130,9 @@ public class ClientSpoofer implements ClientModInitializer {
                                         ClientSpooferOptions.save(CONFIG_FILE);
                                         if (ClientSpooferOptions.onConfigChanged != null)
                                             ClientSpooferOptions.onConfigChanged.run();
-                                        ctx.getSource().sendFeedback(Component.literal("[Spoofified] Added to hidden mods: " + modid));
+                                        ctx.getSource().sendFeedback(Component.translatable("spoofified.command.hide.added", modid));
                                     } else {
-                                        ctx.getSource().sendError(Component.literal("[Spoofified] Mod is already hidden: " + modid));
+                                        ctx.getSource().sendError(Component.translatable("spoofified.command.hide.already", modid));
                                     }
                                     return 1;
                                 })
@@ -148,9 +148,9 @@ public class ClientSpoofer implements ClientModInitializer {
                                         ClientSpooferOptions.save(CONFIG_FILE);
                                         if (ClientSpooferOptions.onConfigChanged != null)
                                             ClientSpooferOptions.onConfigChanged.run();
-                                        ctx.getSource().sendFeedback(Component.literal("[Spoofified] Removed from hidden mods: " + modid));
+                                        ctx.getSource().sendFeedback(Component.translatable("spoofified.command.reveal.removed", modid));
                                     } else {
-                                        ctx.getSource().sendError(Component.literal("[Spoofified] Mod was not hidden: " + modid));
+                                        ctx.getSource().sendError(Component.translatable("spoofified.command.reveal.not_hidden", modid));
                                     }
                                     return 1;
                                 })

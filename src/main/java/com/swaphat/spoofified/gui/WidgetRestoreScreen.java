@@ -35,7 +35,7 @@ public class WidgetRestoreScreen extends Screen {
     }
 
     public WidgetRestoreScreen(Screen previous) {
-        super(Component.literal("Manage Custom UI Widgets"));
+        super(Component.translatable("spoofified.screen.widget_restore.title"));
         this.previous = previous;
     }
 
@@ -45,17 +45,15 @@ public class WidgetRestoreScreen extends Screen {
         int spacing = 10;
         int startX = this.width / 2 - (buttonWidth * 3 + spacing * 2) / 2;
 
-        // ==========================================
         // THE NEW TOGGLE BUTTON
-        // ==========================================
         addRenderableWidget(Button.builder(
-                Component.literal("Auto-Recalculate: " + (ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF")),
+                Component.translatable("spoofified.screen.widget_restore.auto_recalculate", ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF"),
                 button -> {
                     // Flip the boolean
                     ClientSpooferOptions.AUTO_RECALCULATE_UI = !ClientSpooferOptions.AUTO_RECALCULATE_UI;
 
                     // Update the button text dynamically
-                    button.setMessage(Component.literal("Auto-Recalculate: " + (ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF")));
+                    button.setMessage(Component.translatable("spoofified.screen.widget_restore.auto_recalculate", ClientSpooferOptions.AUTO_RECALCULATE_UI ? "ON" : "OFF"));
 
                     // Save the new state to config
                     if (ClientSpoofer.CONFIG_FILE != null) {
@@ -66,11 +64,11 @@ public class WidgetRestoreScreen extends Screen {
 
 
         // Category Tabs
-        addRenderableWidget(Button.builder(Component.literal(Category.HIDDEN.title), _ -> switchCategory(Category.HIDDEN))
+        addRenderableWidget(Button.builder(Component.translatable("spoofified.screen.widget_restore.category.hidden"), _ -> switchCategory(Category.HIDDEN))
                 .bounds(startX, 10, buttonWidth, 20).build());
-        addRenderableWidget(Button.builder(Component.literal(Category.EDITED.title), _ -> switchCategory(Category.EDITED))
+        addRenderableWidget(Button.builder(Component.translatable("spoofified.screen.widget_restore.category.edited"), _ -> switchCategory(Category.EDITED))
                 .bounds(startX + buttonWidth + spacing, 10, buttonWidth, 20).build());
-        addRenderableWidget(Button.builder(Component.literal(Category.DELETED.title), _ -> switchCategory(Category.DELETED))
+        addRenderableWidget(Button.builder(Component.translatable("spoofified.screen.widget_restore.category.deleted"), _ -> switchCategory(Category.DELETED))
                 .bounds(startX + (buttonWidth + spacing) * 2, 10, buttonWidth, 20).build());
 
         restoreList = new RestoreList(minecraft, this.width, this.height - 80, 40);
@@ -146,7 +144,7 @@ public class WidgetRestoreScreen extends Screen {
             Random random = new Random();
             this.borderColor = 0xFF000000 | random.nextInt(0xFFFFFF);
 
-            this.resetButton = Button.builder(Component.literal("Reset"), _ -> {
+            this.resetButton = Button.builder(Component.translatable("spoofified.screen.widget_restore.reset"), _ -> {
                 if (category == Category.HIDDEN) ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
                 else if (category == Category.DELETED) ClientSpooferOptions.DELETED_WIDGETS.remove(uniqueId);
                 else if (category == Category.EDITED) ClientSpooferOptions.CUSTOM_BOUNDS.remove(uniqueId);

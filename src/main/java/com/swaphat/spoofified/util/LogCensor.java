@@ -24,11 +24,9 @@ public class LogCensor implements RewritePolicy {
 
         LoggerConfig rootConfig = config.getRootLogger();
 
-        // 1. Grab the exact original references (THIS PRESERVES THE DEBUG/INFO FILTERS!)
         List<AppenderRef> originalRefs = new ArrayList<>(rootConfig.getAppenderRefs());
         AppenderRef[] appenderRefsArray = originalRefs.toArray(new AppenderRef[0]);
 
-        // 2. Create our Censor Appender
         RewriteAppender rewriteAppender = RewriteAppender.createAppender(
                 "SpoofifiedCensor",
                 "true",
@@ -40,12 +38,10 @@ public class LogCensor implements RewritePolicy {
         rewriteAppender.start();
         config.addAppender(rewriteAppender);
 
-        // 3. Unplug the original, unfiltered connections
         for (AppenderRef ref : originalRefs) {
             rootConfig.removeAppender(ref.getRef());
         }
 
-        // 4. Plug our Censor in, carefully preserving the Root Logger's original Level
         rootConfig.addAppender(rewriteAppender, rootConfig.getLevel(), rootConfig.getFilter());
 
         context.updateLoggers();
@@ -65,7 +61,7 @@ public class LogCensor implements RewritePolicy {
 
         String originalMsg = source.getMessage() != null ? source.getMessage().getFormattedMessage() : "";
 
-        if (originalMsg.contains("[CHAT]")) {
+        if (originalMsg.contains("[CHAT]") && ClientSpooferOptions.HideChatMentions) {
             return source;
         }
 

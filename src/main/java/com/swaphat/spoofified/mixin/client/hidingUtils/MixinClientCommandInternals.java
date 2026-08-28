@@ -28,20 +28,19 @@ public class MixinClientCommandInternals {
     private static Map clientspoofer$filterFabricHelp(
             CommandDispatcher dispatcher,
             CommandNode node,
-            Object source // FIXED: This MUST be Object because <S> erases to Object in bytecode!
+            Object source
     ) {
 
-        // 1. Get the original list of commands Fabric wants to print (Using raw types)
+        // Get the original list of commands Fabric wants to print (Using raw types)
         Map originalMap = dispatcher.getSmartUsage(node, source);
 
         if (!ClientSpooferOptions.ENABLED) {
             return originalMap;
         }
 
-        // 2. Create a clean map to hold the safe commands
+        // Create a clean map to hold the safe commands
         Map safeMap = new LinkedHashMap();
 
-        // 3. Loop through every command and check if it's blacklisted
         for (Object obj : originalMap.entrySet()) {
             Map.Entry entry = (Map.Entry) obj;
             CommandNode cmdNode = (CommandNode) entry.getKey();
@@ -77,7 +76,6 @@ public class MixinClientCommandInternals {
             }
         }
 
-        // 4. Return the scrubbed map to Fabric
         return safeMap;
     }
 }

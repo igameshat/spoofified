@@ -34,6 +34,7 @@ public class ClientSpooferOptions {
     public static Set<String> DELETED_WIDGETS = new HashSet<>();
     public static Set<String> HIDDEN_WIDGETS = new HashSet<>();
     public static Map<String, WidgetBounds> CUSTOM_BOUNDS = new HashMap<>();
+    public static boolean HideChatMentions = false;
 
     public static boolean AUTO_RECALCULATE_UI = true;
 
@@ -90,6 +91,7 @@ public class ClientSpooferOptions {
             if (json.has("deleted-widgets")) loadSet(json.getAsJsonArray("deleted-widgets"), DELETED_WIDGETS);
             if (json.has("hidden-widgets")) loadSet(json.getAsJsonArray("hidden-widgets"), HIDDEN_WIDGETS);
             if(json.has("auto-recalculate-ui")) AUTO_RECALCULATE_UI = json.get("auto-recalculate-ui").getAsBoolean();
+            if(json.has("hide-chat-mentions")) HideChatMentions = json.get("hide-chat-mentions").getAsBoolean();
 
             if (json.has("custom-bounds")) {
                 CUSTOM_BOUNDS.clear();
@@ -128,6 +130,7 @@ public class ClientSpooferOptions {
             json.add("custom-hidden-keys", setToArray(CUSTOM_HIDDEN_KEYS));
             json.add("custom-hidden-commands", setToArray(CUSTOM_HIDDEN_COMMANDS));
             json.add("allowed-custom-payload-channels", setToArray(ALLOWED_CUSTOM_PAYLOAD_CHANNELS));
+            json.addProperty("hide-chat-mentions", HideChatMentions);
 
             // Widget Persistence
             json.add("deleted-widgets", setToArray(DELETED_WIDGETS));

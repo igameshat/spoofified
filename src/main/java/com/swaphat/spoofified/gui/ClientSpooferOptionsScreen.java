@@ -151,7 +151,7 @@ public class ClientSpooferOptionsScreen extends Screen {
         }
 
 
-        widgets.add(Button.builder(Component.literal("Configure Hidden Mods..."), _ -> {
+        widgets.add(Button.builder(Component.translatable("spoofified.screen.options.configure_hidden_mods"), _ -> {
             ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
             this.minecraft.setScreenAndShow(new ClientModSpoofingScreen(this));
         }).size(200, 20).build());

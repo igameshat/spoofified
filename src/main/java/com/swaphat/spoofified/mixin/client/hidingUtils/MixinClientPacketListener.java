@@ -79,7 +79,7 @@ public class MixinClientPacketListener {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
                 mc.player.sendSystemMessage(
-                        Component.literal(String.format("§cUnknown or incomplete command, see below for error\n§c§u%s<--[HERE]",cleaned))
+                        Component.translatable("spoofified.command.unknown_command", cleaned)
                 );
             }
 

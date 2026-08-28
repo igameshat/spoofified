@@ -31,11 +31,11 @@ public abstract class MixinModMain {
 
     @Inject(method = "onInitializeClient", at = @At("TAIL"), remap = false)
     private void initializeHeadInjection(CallbackInfo ci) {
-        // 1. Back up the original maps exactly as ModMenu loaded them
+        // Back up the original maps exactly as ModMenu loaded them
         clientspoofer$originalMods.putAll(MODS);
         clientspoofer$originalRootMods.putAll(ROOT_MODS);
 
-        // 2. Define the refresh logic and assign it to our options hook
+        // Define the refresh logic and assign it to our options hook
         ClientSpooferOptions.onConfigChanged = () -> {
 
             // Restore everything from the backups
@@ -52,7 +52,6 @@ public abstract class MixinModMain {
             PARENT_MAP.clear();
         };
 
-        // 3. Run it once for the initial load
         ClientSpooferOptions.onConfigChanged.run();
     }
 

@@ -21,7 +21,7 @@ public class MixinCrashOutButton extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void addCrashOutButton(CallbackInfo ci) {
         assert Minecraft.getInstance().gui.screen() != null;
-        this.addRenderableWidget(Button.builder(Component.literal("Crash Out"), (_) -> {
+        this.addRenderableWidget(Button.builder(Component.translatable("spoofified.button.crash_out"), (_) -> {
 
             Minecraft.getInstance().setScreenAndShow(new WidgetRestoreScreen(Minecraft.getInstance().gui.screen()));
         }).bounds(Minecraft.getInstance().gui.screen().width-9, Minecraft.getInstance().gui.screen().height-9, 10, 10).build());

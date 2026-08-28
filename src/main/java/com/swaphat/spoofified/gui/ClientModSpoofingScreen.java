@@ -35,7 +35,7 @@ public class ClientModSpoofingScreen extends Screen {
     private ModHideList modHideList;
 
     public ClientModSpoofingScreen(Screen previous) {
-        super(Component.literal("Hidden Mods Configuration"));
+        super(Component.translatable("spoofified.screen.mod_spoofing.title"));
         this.previous = previous;
     }
 
@@ -45,10 +45,8 @@ public class ClientModSpoofingScreen extends Screen {
         int leftColX = 20;
         int rightColX = 40 + columnWidth;
 
-        // ==========================================
         // TOP CENTER: Global Spoofer Toggle
-        // ==========================================
-        Component enabledText = Component.literal("Spoofer Enabled: ")
+        Component enabledText = Component.translatable("spoofified.screen.mod_spoofing.enabled")
                 .append(ClientSpooferOptions.ENABLED ? OPTION_ON.copy().withStyle(ChatFormatting.GREEN) : OPTION_OFF.copy().withStyle(ChatFormatting.RED));
 
         addRenderableWidget(Button.builder(enabledText, _ -> {
@@ -56,23 +54,21 @@ public class ClientModSpoofingScreen extends Screen {
             rebuildWidgets();
         }).bounds(this.width / 2 - 100, 5, 200, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Manage Custom Changes"), _ -> {
+        addRenderableWidget(Button.builder(Component.translatable("spoofified.screen.mod_spoofing.manage_custom_changes"), _ -> {
             minecraft.setScreenAndShow(new WidgetRestoreScreen(this));
         }).bounds(this.width - 160, 5, 150, 20).build());
-        addRenderableWidget(Button.builder(Component.literal("Manage Log History"), _ -> {
+        addRenderableWidget(Button.builder(Component.translatable("spoofified.screen.mod_spoofing.manage_log_history"), _ -> {
             minecraft.setScreenAndShow(new LogBrowserScreen());
         }).bounds(this.width - 160, 25, 150, 20).build());
 
-        // ==========================================
         // LEFT COLUMN: Hidden Mods List
-        // ==========================================
         addRenderableWidget(new MultiLineTextWidget(
                 leftColX, 35,
-                Component.literal("Select Mods to Hide").withStyle(ChatFormatting.YELLOW),
+                Component.translatable("spoofified.screen.mod_spoofing.select_mods_to_hide").withStyle(ChatFormatting.YELLOW),
                 font).setMaxWidth(columnWidth));
 
         EditBox searchEditBox = new EditBox(font, leftColX, 50, columnWidth, 20, Component.literal(""));
-        searchEditBox.setHint(Component.literal("Search mods..."));
+        searchEditBox.setHint(Component.translatable("spoofified.screen.mod_spoofing.search_hint"));
         searchEditBox.setValue(modSearch);
         searchEditBox.setResponder(value -> {
             modSearch = value;
@@ -85,19 +81,17 @@ public class ClientModSpoofingScreen extends Screen {
         fillModHideList();
         addRenderableWidget(modHideList);
 
-        // ==========================================
         // RIGHT COLUMN: Custom Dictionaries
-        // ==========================================
         int halfBoxHeight = (this.height - 120) / 2;
 
         // Custom Keys
         addRenderableWidget(new MultiLineTextWidget(
                 rightColX, 35,
-                Component.literal("Hidden Keybinds (One per line)").withStyle(ChatFormatting.YELLOW),
+                Component.translatable("spoofified.screen.mod_spoofing.hidden_keybinds_label").withStyle(ChatFormatting.YELLOW),
                 font).setMaxWidth(columnWidth));
 
         MultiLineEditBox keysBox = MultiLineEditBox.builder().build(
-                font, columnWidth, halfBoxHeight, Component.literal("Hidden Keybinds"));
+                font, columnWidth, halfBoxHeight, Component.translatable("spoofified.screen.mod_spoofing.hidden_keybinds"));
         keysBox.setPosition(rightColX, 50);
         keysBox.setValue(String.join("\n", ClientSpooferOptions.CUSTOM_HIDDEN_KEYS));
         keysBox.setValueListener(value -> updateSetFromString(value, ClientSpooferOptions.CUSTOM_HIDDEN_KEYS));
@@ -107,19 +101,17 @@ public class ClientModSpoofingScreen extends Screen {
         int commandsY = 50 + halfBoxHeight + 20;
         addRenderableWidget(new MultiLineTextWidget(
                 rightColX, commandsY - 15,
-                Component.literal("Hidden Commands (One per line)").withStyle(ChatFormatting.YELLOW),
+                Component.translatable("spoofified.screen.mod_spoofing.hidden_commands_label").withStyle(ChatFormatting.YELLOW),
                 font).setMaxWidth(columnWidth));
 
         MultiLineEditBox commandsBox = MultiLineEditBox.builder().build(
-                font, columnWidth, halfBoxHeight, Component.literal("Hidden Commands"));
+                font, columnWidth, halfBoxHeight, Component.translatable("spoofified.screen.mod_spoofing.hidden_commands"));
         commandsBox.setPosition(rightColX, commandsY);
         commandsBox.setValue(String.join("\n", ClientSpooferOptions.CUSTOM_HIDDEN_COMMANDS));
         commandsBox.setValueListener(value -> updateSetFromString(value, ClientSpooferOptions.CUSTOM_HIDDEN_COMMANDS));
         addRenderableWidget(commandsBox);
 
-        // ==========================================
         // BOTTOM: Done Button
-        // ==========================================
         addRenderableWidget(Button.builder(Component.translatable("gui.done"), _ -> onClose())
                 .bounds(this.width / 2 - 100, this.height - 30, 200, 20)
                 .build());
@@ -167,9 +159,7 @@ public class ClientModSpoofingScreen extends Screen {
         }
     }
 
-    // ==========================================
     // INNER CLASSES FOR MOD LIST
-    // ==========================================
     private class ModHideList extends AbstractSelectionList<ModHideEntry> {
         public ModHideList(Minecraft minecraft, int width, int height, int y) {
             super(minecraft, width, height, y, 21);

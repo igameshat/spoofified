@@ -11,5 +11,44 @@
   "clientspoofer.option.filter": "Filter",
   "clientspoofer.option.disable_custom_payloads": "Disable Custom Payloads (used by some mods)",
   "clientspoofer.option.allowed_custom_payload_channels": "Allowed Custom Payload Channels (to allow even when disabling custom payloads)",
-  "clientspoofer.toast.server_attempted_reading_mods": "This server attempted to read your mod list. Client Spoofer protected you."
+  "clientspoofer.toast.server_attempted_reading_mods": "This server attempted to read your mod list. Client Spoofer protected you.",
+
+  "spoofified.command.panic.self_destruct": "§c[Spoofified] Self-Destructing: Mod completely hidden.",
+  "spoofified.command.mdm.restored": "§a[Spoofified] Restored in Mod Menu.",
+  "spoofified.command.mdm.hidden": "§c[Spoofified] Hidden from Mod Menu.",
+  "spoofified.command.toggle": "[Spoofified] Client Spoofer enabled: %s",
+  "spoofified.command.hide.added": "[Spoofified] Added to hidden mods: %s",
+  "spoofified.command.hide.already": "[Spoofified] Mod is already hidden: %s",
+  "spoofified.command.reveal.removed": "[Spoofified] Removed from hidden mods: %s",
+  "spoofified.command.reveal.not_hidden": "[Spoofified] Mod was not hidden: %s",
+  "spoofified.command.recovery": "§c[Spoofified] System Recovered.",
+  "spoofified.command.unknown_command": "§cUnknown or incomplete command, see below for error\n§c§u%s<--[HERE]",
+
+  "spoofified.screen.mod_spoofing.title": "Hidden Mods Configuration",
+  "spoofified.screen.mod_spoofing.enabled": "Spoofer Enabled: ",
+  "spoofified.screen.mod_spoofing.manage_custom_changes": "Manage Custom Changes",
+  "spoofified.screen.mod_spoofing.manage_log_history": "Manage Log History",
+  "spoofified.screen.mod_spoofing.select_mods_to_hide": "Select Mods to Hide",
+  "spoofified.screen.mod_spoofing.search_hint": "Search mods...",
+  "spoofified.screen.mod_spoofing.hidden_keybinds_label": "Hidden Keybinds (One per line)",
+  "spoofified.screen.mod_spoofing.hidden_keybinds": "Hidden Keybinds",
+  "spoofified.screen.mod_spoofing.hidden_commands_label": "Hidden Commands (One per line)",
+  "spoofified.screen.mod_spoofing.hidden_commands": "Hidden Commands",
+
+  "spoofified.screen.options.configure_hidden_mods": "Configure Hidden Mods...",
+
+  "spoofified.screen.log_browser.title": "Live Log Browser",
+  "spoofified.screen.log_browser.censor_button": "Censor mod mentions from chat in logs: %s",
+  "spoofified.screen.log_browser.search": "Search",
+
+  "spoofified.screen.widget_restore.title": "Manage Custom UI Widgets",
+  "spoofified.screen.widget_restore.auto_recalculate": "Auto-Recalculate: %s",
+  "spoofified.screen.widget_restore.category.hidden": "Hidden",
+  "spoofified.screen.widget_restore.category.edited": "Edited",
+  "spoofified.screen.widget_restore.category.deleted": "Deleted",
+  "spoofified.screen.widget_restore.reset": "Reset",
+
+  "spoofified.toast.title": "Client Spoofer",
+
+  "spoofified.button.crash_out": "Crash Out"
 }

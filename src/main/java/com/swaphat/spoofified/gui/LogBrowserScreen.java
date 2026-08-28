@@ -1,5 +1,6 @@
 package com.swaphat.spoofified.gui;
 
+import com.swaphat.spoofified.ClientSpooferOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -24,7 +25,7 @@ public class LogBrowserScreen extends Screen {
     private final Path logPath;
 
     public LogBrowserScreen() {
-        super(Component.literal("Live Log Browser"));
+        super(Component.translatable("spoofified.screen.log_browser.title"));
         this.logPath = Minecraft.getInstance().gameDirectory.toPath().resolve("logs/latest.log");
     }
 
@@ -35,9 +36,16 @@ public class LogBrowserScreen extends Screen {
         } catch (Exception e) {
             allLines.add("Failed to load logs: " + e.getMessage());
         }
-
-        // 1. Make the search box wider and center it clearly
-        searchBox = new EditBox(this.font, this.width / 2 - 150, 20, 300, 20, Component.literal("Search"));
+        Button chatCensorButton = Button.builder(
+                Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HideChatMentions),
+                button -> {
+                    ClientSpooferOptions.HideChatMentions = !ClientSpooferOptions.HideChatMentions;
+                    button.setMessage(Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HideChatMentions));
+                }).bounds(
+                0, 0, this.font.width("Censor mod mentions from chat in logs: false") + 15, 20
+        ).build();
+        this.addRenderableWidget(chatCensorButton);
+        searchBox = new EditBox(this.font, this.width / 2 - 150, 20, 300, 20, Component.translatable("spoofified.screen.log_browser.search"));
         searchBox.setResponder(this::updateSearch);
         this.addRenderableWidget(searchBox);
 
