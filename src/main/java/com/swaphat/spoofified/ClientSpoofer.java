@@ -23,7 +23,8 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class ClientSpoofer implements ClientModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("spoofified");
+    static String modid = "spoofified";
+    public static final Logger LOGGER = LoggerFactory.getLogger(modid);
     public static Path CONFIG_FILE;
 
     @Override
@@ -86,7 +87,7 @@ public class ClientSpoofer implements ClientModInitializer {
 
                 commandNode.then(literal("mdm")
                         .executes(ctx -> {
-                            String modid = "spoofified"; // Change if your modid is different
+
                             if (ClientSpooferOptions.HIDDEN_MODS.contains(modid)) {
                                 ClientSpooferOptions.HIDDEN_MODS.remove(modid);
                                 ctx.getSource().sendFeedback(Component.translatable("spoofified.command.mdm.restored"));
