@@ -4,12 +4,10 @@ import com.swaphat.spoofified.ClientSpooferOptions;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.input.MouseButtonEvent;
-import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,8 +29,6 @@ public abstract class MixinAbstractWidget {
     @Shadow public abstract void setY(int y);
     @Shadow public abstract void setWidth(int width);
     @Shadow public abstract void setHeight(int height);
-    @Shadow public abstract Component getMessage();
-    @Shadow public boolean visible;
 
     @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
     private void clientspoofer$checkStates(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
@@ -143,13 +139,16 @@ public abstract class MixinAbstractWidget {
         double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
         double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
 
-        boolean isCtrlDown = InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_RIGHT_CONTROL);
+        boolean isCtrlDown = false;
+        try {
+            isCtrlDown = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
+        } catch (IndexOutOfBoundsException ignored) {}
+
         boolean isHovering = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.getWidth() && mouseY < this.getY() + this.getHeight();
 
-        if (isHovering && event.button() == 1 && isCtrlDown) {
+        if (isHovering && event.button() == 3 && isCtrlDown) {
             if (ClientSpooferOptions.ACTIVE_MENU_OWNER == (Object) this) {
                 ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
-                return;
             } else {
                 ClientSpooferOptions.ACTIVE_MENU_OWNER = (AbstractWidget) (Object) this;
                 ClientSpooferOptions.MENU_X = (int) mouseX;
@@ -166,15 +165,12 @@ public abstract class MixinAbstractWidget {
 
         String uniqueId = ClientSpooferOptions.getWidgetId((AbstractWidget)(Object)this);
 
-        // If deleted, tell the layout engine it takes up 0 horizontal space
         if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
             cir.setReturnValue(0);
         }
-        // If edited, tell the layout engine to use your custom width
         else if (ClientSpooferOptions.CUSTOM_BOUNDS.containsKey(uniqueId)) {
             cir.setReturnValue(ClientSpooferOptions.CUSTOM_BOUNDS.get(uniqueId).width);
         }
-        // Hidden widgets fall through here and return normal size, preserving the gap!
     }
 
     @Inject(method = "getHeight", at = @At("HEAD"), cancellable = true)
@@ -183,11 +179,9 @@ public abstract class MixinAbstractWidget {
 
         String uniqueId = ClientSpooferOptions.getWidgetId((AbstractWidget)(Object)this);
 
-        // If deleted, tell the layout engine it takes up 0 vertical space
         if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
             cir.setReturnValue(0);
         }
-        // If edited, tell the layout engine to use your custom height
         else if (ClientSpooferOptions.CUSTOM_BOUNDS.containsKey(uniqueId)) {
             cir.setReturnValue(ClientSpooferOptions.CUSTOM_BOUNDS.get(uniqueId).height);
         }

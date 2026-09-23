@@ -4,7 +4,6 @@ import com.swaphat.spoofified.ClientSpoofer;
 import com.swaphat.spoofified.ClientSpooferOptions;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonInfo;
-import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -37,7 +36,7 @@ public class MixinMouseHandler {
                 boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
 
                 if (inMainMenu) {
-                    if (rawButtonInfo.button() == 0) {
+                    if (rawButtonInfo.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
                         String uniqueId = ClientSpooferOptions.getWidgetId(owner);
 
                         if (mouseY < my + 20) {
@@ -91,7 +90,7 @@ public class MixinMouseHandler {
             if (mouseX >= subX && mouseX <= subX + 100 && mouseY >= subY && mouseY <= subY + 80) {
                 int scrollAmount = yoffset > 0 ? 1 : -1;
 
-                boolean isCtrlDown = InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(client.getWindow(), GLFW.GLFW_KEY_RIGHT_CONTROL);
+                boolean isCtrlDown = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
                 if (isCtrlDown) scrollAmount *= 10;
 
                 int newX = owner.getX();
