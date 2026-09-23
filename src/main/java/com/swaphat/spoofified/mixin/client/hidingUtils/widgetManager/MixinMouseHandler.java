@@ -36,7 +36,7 @@ public class MixinMouseHandler {
                 boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
 
                 if (inMainMenu) {
-                    if (rawButtonInfo.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
+                    if (rawButtonInfo.button() == InputConstants.MOUSE_BUTTON_LEFT || rawButtonInfo.button() == InputConstants.MOUSE_BUTTON_RIGHT || rawButtonInfo.button() == InputConstants.MOUSE_BUTTON_MIDDLE) {
                         String uniqueId = ClientSpooferOptions.getWidgetId(owner);
 
                         if (mouseY < my + 20) {

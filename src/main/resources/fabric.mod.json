@@ -20,7 +20,7 @@
   "mixins": ["spoofified.mixins.json"],
   "depends": {
     "fabricloader": "*",
-    "minecraft": "~26.3"
+    "minecraft": "~${minecraft_version}"
   },
   "recommends": {
     "modmenu": ">=${modmenu_version}"

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.swaphat"
-version = "2.2.0"
+version = "2.2.1"
 
 repositories {
     maven("https://maven.terraformersmc.com")
