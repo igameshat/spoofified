@@ -2,6 +2,7 @@ package com.swaphat.spoofified;
 
 import com.swaphat.spoofified.gui.LogBrowserScreen;
 import com.swaphat.spoofified.gui.SpoofifiedConfigScreen;
+import com.swaphat.spoofified.util.UpdateChecker;
 import net.fabricmc.api.ClientModInitializer;
 
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -29,6 +31,14 @@ public class ClientSpoofer implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
+        FabricLoader.getInstance().getModContainer("spoofified").ifPresent(mod -> {
+            String currentVersion = mod.getMetadata().getVersion().getFriendlyString();
+            UpdateChecker.checkAsync(currentVersion);
+        });
+
+        // Hook into world join to display the notification
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> UpdateChecker.onWorldJoin());
         Minecraft client = Minecraft.getInstance();
         CONFIG_FILE = client.gameDirectory.toPath().resolve("config/spoofified.json");
         ClientSpooferOptions.load(CONFIG_FILE);
