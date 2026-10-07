@@ -13,10 +13,8 @@ import java.util.Map;
 @Mixin(targets = "net.fabricmc.fabric.impl.command.client.ClientCommandInternals")
 public class MixinClientCommandInternals {
 
-    // We suppress the generic warnings because we are forced to use raw types for the Mixin to compile
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Redirect(
-            // We list the methods from your snippet. Require=1 ensures it doesn't crash if it only finds one.
             method = { "executeRootHelp", "executeArgumentHelp", "executeHelp" },
             at = @At(
                     value = "INVOKE",
@@ -61,7 +59,7 @@ public class MixinClientCommandInternals {
 
             // Check against the automatic Mod IDs
             if (!shouldHide) {
-                for (String hiddenMod : ClientSpooferOptions.HIDDEN_MODS) {
+                for (String hiddenMod : ClientSpooferOptions.MOD_FILTER_LIST) {
                     String cleanMod = hiddenMod.toLowerCase().replace("-", "").replace("_", "").trim();
                     if (!cleanMod.isEmpty() && cmdName.contains(cleanMod)) {
                         shouldHide = true;

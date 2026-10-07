@@ -2,7 +2,7 @@ package com.swaphat.spoofified.mixin;
 
 import com.swaphat.spoofified.ClientSpooferOptions;
 import com.swaphat.spoofified.util.ComponentUtils;
-import com.swaphat.spoofified.util.ToastUtils;
+import com.swaphat.spoofified.util.WarnUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AnvilMenu;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,10 +15,10 @@ public class AnvilMenuMixin {
             method = "createResult",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;getString()Ljava/lang/String;"))
     public String getString(Component instance) {
-        if (ClientSpooferOptions.hideMods() || !ClientSpooferOptions.ENABLED) {
+        if (ClientSpooferOptions.shouldHideMods()) {
             String str = ComponentUtils.getString(instance);
             if (!str.equals(instance.getString())) {
-                ToastUtils.showServerAttemptedReadingModsToast();
+                WarnUtils.showServerAttemptedReadingModsToast();
             }
             return str;
         } else {

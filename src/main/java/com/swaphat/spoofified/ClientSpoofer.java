@@ -1,7 +1,7 @@
 package com.swaphat.spoofified;
 
-import com.swaphat.spoofified.gui.ClientSpooferOptionsScreen;
 import com.swaphat.spoofified.gui.LogBrowserScreen;
+import com.swaphat.spoofified.gui.SpoofifiedConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 
 import java.nio.file.Path;
@@ -36,13 +36,13 @@ public class ClientSpoofer implements ClientModInitializer {
         SuggestionProvider<FabricClientCommandSource> suggestHideableMods = (_, builder) -> SharedSuggestionProvider.suggest(
                 FabricLoader.getInstance().getAllMods().stream()
                         .map(mod -> mod.getMetadata().getId())
-                        .filter(id -> !ClientSpooferOptions.HIDDEN_MODS.contains(id))
+                        .filter(id -> !ClientSpooferOptions.MOD_FILTER_LIST.contains(id))
                         .toList(),
                 builder
         );
 
         SuggestionProvider<FabricClientCommandSource> suggestRevealableMods = (_, builder) -> SharedSuggestionProvider.suggest(
-                ClientSpooferOptions.HIDDEN_MODS,
+                ClientSpooferOptions.MOD_FILTER_LIST,
                 builder
         );
 
@@ -53,7 +53,7 @@ public class ClientSpoofer implements ClientModInitializer {
                     .executes(ctx -> {
                         ClientSpooferOptions.PANIC_MODE = true;
                         ClientSpooferOptions.ENABLED = false;
-                        ClientSpooferOptions.HIDDEN_MODS.add("spoofified");
+                        ClientSpooferOptions.MOD_FILTER_LIST.add("spoofified");
 
                         if (ClientSpooferOptions.onConfigChanged != null) {
                             ClientSpooferOptions.onConfigChanged.run();
@@ -73,7 +73,6 @@ public class ClientSpoofer implements ClientModInitializer {
                                 java.lang.reflect.Field literalsField = com.mojang.brigadier.tree.CommandNode.class.getDeclaredField("literals");
                                 literalsField.setAccessible(true);
                                 ((java.util.Map<?, ?>) literalsField.get(root)).remove("..");
-
                             } catch (Exception e) {
                                 ClientSpoofer.LOGGER.error("Failed to wipe command from memory", e);
                             }
@@ -87,12 +86,11 @@ public class ClientSpoofer implements ClientModInitializer {
 
                 commandNode.then(literal("mdm")
                         .executes(ctx -> {
-
-                            if (ClientSpooferOptions.HIDDEN_MODS.contains(modid)) {
-                                ClientSpooferOptions.HIDDEN_MODS.remove(modid);
+                            if (ClientSpooferOptions.MOD_FILTER_LIST.contains(modid)) {
+                                ClientSpooferOptions.MOD_FILTER_LIST.remove(modid);
                                 ctx.getSource().sendFeedback(Component.translatable("spoofified.command.mdm.restored"));
                             } else {
-                                ClientSpooferOptions.HIDDEN_MODS.add(modid);
+                                ClientSpooferOptions.MOD_FILTER_LIST.add(modid);
                                 ctx.getSource().sendFeedback(Component.translatable("spoofified.command.mdm.hidden"));
                             }
 
@@ -127,7 +125,7 @@ public class ClientSpoofer implements ClientModInitializer {
                                 .suggests(suggestHideableMods)
                                 .executes(ctx -> {
                                     String modid = StringArgumentType.getString(ctx, "modid");
-                                    if (ClientSpooferOptions.HIDDEN_MODS.add(modid)) {
+                                    if (ClientSpooferOptions.MOD_FILTER_LIST.add(modid)) {
                                         ClientSpooferOptions.save(CONFIG_FILE);
                                         if (ClientSpooferOptions.onConfigChanged != null)
                                             ClientSpooferOptions.onConfigChanged.run();
@@ -145,7 +143,7 @@ public class ClientSpoofer implements ClientModInitializer {
                                 .suggests(suggestRevealableMods)
                                 .executes(ctx -> {
                                     String modid = StringArgumentType.getString(ctx, "modid");
-                                    if (ClientSpooferOptions.HIDDEN_MODS.remove(modid)) {
+                                    if (ClientSpooferOptions.MOD_FILTER_LIST.remove(modid)) {
                                         ClientSpooferOptions.save(CONFIG_FILE);
                                         if (ClientSpooferOptions.onConfigChanged != null)
                                             ClientSpooferOptions.onConfigChanged.run();
@@ -159,7 +157,7 @@ public class ClientSpoofer implements ClientModInitializer {
                 );
                 commandNode.then(literal("open")
                         .executes(_ -> {
-                            client.execute(() -> client.setScreenAndShow(new ClientSpooferOptionsScreen(null)));
+                            client.execute(() -> client.setScreenAndShow(new SpoofifiedConfigScreen(client.gui.screen())));
                             return 1;
                         })
                 );

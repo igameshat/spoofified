@@ -1,6 +1,7 @@
 package com.swaphat.spoofified.mixin.client;
 
 import com.swaphat.spoofified.ClientSpooferOptions;
+import com.swaphat.spoofified.util.LunarVersionFetcher;
 import net.minecraft.client.ClientBrandRetriever;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,8 @@ public class ClientBrandRetrieverMixin {
             case VANILLA -> cir.setReturnValue(ClientBrandRetriever.VANILLA_NAME);
             case MODDED -> cir.setReturnValue("fabric");
             case CUSTOM -> cir.setReturnValue(ClientSpooferOptions.CUSTOM_CLIENT);
+            case LUNAR -> cir.setReturnValue(LunarVersionFetcher.getLunarClientBrand());
+            case BADLION -> cir.setReturnValue("badlion");
         }
     }
 }

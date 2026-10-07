@@ -6,28 +6,34 @@
   "mixins" : [
     "AnvilMenuMixin",
     "DownloadQueueMixin",
-    "LanguageAccessor"
+    "LanguageAccessor",
+    "client.hidingUtils.MixinConnection",
+    "client.packs.MixinPathPackResources"
   ],
   "client" : [
     "client.AbstractSignEditScreenMixin",
     "client.AnvilScreenMixin",
     "client.ClientBrandRetrieverMixin",
     "client.ConnectionMixin",
-    "client.KnownPacksManagerMixin",
     "client.LanguageManagerAccessor",
+    "client.MinecraftFeatureRemoverMixin",
     "client.hidingUtils.MixinClientCommandInternals",
     "client.hidingUtils.MixinClientPacketListener",
     "client.hidingUtils.MixinCommandSuggestions",
     "client.hidingUtils.MixinKeyBindsList",
+    "client.hidingUtils.MixinKeyMapping",
     "client.hidingUtils.MixinLanguageManager",
-    "client.hidingUtils.MixinModMain",
+    "client.hidingUtils.MixinModMenuEntrypoint",
     "client.hidingUtils.MixinServerCommandHider",
     "client.hidingUtils.widgetManager.MixinAbstractWidget",
     "client.hidingUtils.widgetManager.MixinCrashOutButton",
     "client.hidingUtils.widgetManager.MixinGridLayout",
     "client.hidingUtils.widgetManager.MixinLinearLayout",
     "client.hidingUtils.widgetManager.MixinMouseHandler",
-    "client.hidingUtils.widgetManager.ScreenAccessor"
+    "client.hidingUtils.widgetManager.ScreenAccessor",
+    "client.packs.KnownPacksManagerMixin",
+    "client.packs.MixinClientboundResourcePackPushPacket",
+    "client.packs.MixinClientCommonPacketListener"
   ],
   "injectors" : {
     "defaultRequire" : 1

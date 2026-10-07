@@ -2,7 +2,7 @@ package com.swaphat.spoofified.mixin.client;
 
 import com.swaphat.spoofified.ClientSpooferOptions;
 import com.swaphat.spoofified.util.ComponentUtils;
-import com.swaphat.spoofified.util.ToastUtils;
+import com.swaphat.spoofified.util.WarnUtils;
 import java.util.List;
 import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
 import net.minecraft.network.chat.Component;
@@ -28,12 +28,12 @@ public abstract class AbstractSignEditScreenMixin {
         List<Component> currentLines = currentText.getMessages(shouldFilter);
 
         for (int i = 0; i < 4; i++) {
-            if (ClientSpooferOptions.hideMods() || !ClientSpooferOptions.ENABLED) {
+            if (ClientSpooferOptions.shouldHideMods()) {
                 Component message = i < currentLines.size() ? currentLines.get(i) : Component.empty();
                 String str = ComponentUtils.getString(message);
 
                 if (!str.equals(message.getString())) {
-                    ToastUtils.showServerAttemptedReadingModsToast();
+                    WarnUtils.showServerAttemptedReadingModsToast();
                 }
 
                 this.messages[i] = str;

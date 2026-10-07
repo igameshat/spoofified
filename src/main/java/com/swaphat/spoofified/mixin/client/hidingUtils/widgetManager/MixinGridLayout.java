@@ -20,7 +20,7 @@ public class MixinGridLayout {
         if (widget instanceof AbstractWidget abstractWidget) {
             String uniqueId = ClientSpooferOptions.getWidgetId(abstractWidget);
 
-            if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
+            if (ClientSpooferOptions.REMOVED_WIDGETS.contains(uniqueId)) {
                 abstractWidget.setX(-5000);
                 abstractWidget.setY(-5000);
 

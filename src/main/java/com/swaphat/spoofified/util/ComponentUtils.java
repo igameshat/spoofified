@@ -62,10 +62,8 @@ public class ComponentUtils {
                 }
                 serverLanguages.put(minecraft.getConnection(), createServerLanguage());
             }
-
             return !serverLanguages.get(minecraft.getConnection()).has(key);
         }
-
         return !language.has(key);
     }
 
@@ -78,8 +76,17 @@ public class ComponentUtils {
         for (int i = 1; i < allPackResources.size(); i++) {
             PackResources packResource = allPackResources.get(i);
             PackSource source = packResource.location().source();
-            if (!ClientSpooferOptions.hideMods() ||
-                    ClientSpooferOptions.ALLOWED_MODS.contains(packResource.packId()) ||
+
+            boolean isAllowed;
+            if (ClientSpooferOptions.MOD_FILTER_STRATEGY == ClientSpooferOptions.FilterStrategy.ALLOWLIST) {
+                isAllowed = ClientSpooferOptions.MOD_FILTER_LIST.contains(packResource.packId());
+            } else {
+                isAllowed = !ClientSpooferOptions.MOD_FILTER_LIST.contains(packResource.packId());
+            }
+
+            // Updated hideMods() to shouldHideMods()
+            if (!ClientSpooferOptions.shouldHideMods() ||
+                    isAllowed ||
                     source == PackSource.FEATURE ||
                     source == PackSource.WORLD ||
                     source == PackSource.SERVER) {

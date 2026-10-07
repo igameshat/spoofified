@@ -20,20 +20,31 @@ public class ConnectionMixin {
     public void sendPacket(Packet<?> packet, ChannelFutureListener listener, boolean flush, CallbackInfo ci) {
         if (packet instanceof ServerboundCustomPayloadPacket(CustomPacketPayload payload)) {
             if (!(payload instanceof DiscardedPayload) && !(payload instanceof BrandPayload)) {
-                if (ClientSpooferOptions.SPOOF_MODE == SpoofMode.OFF) {
+
+                if (!ClientSpooferOptions.ENABLED) {
                     return;
-                } else if (ClientSpooferOptions.SPOOF_MODE == SpoofMode.MODDED) {
-                    for (String mod : ClientSpooferOptions.ALLOWED_MODS) {
-                        if (payload.type().id().toString().toLowerCase().startsWith(mod.toLowerCase())) {
-                            return;
-                        }
+                }
+
+                String payloadId = payload.type().id().toString().toLowerCase();
+
+                if (ClientSpooferOptions.SPOOF_MODE == SpoofMode.MODDED) {
+                    boolean matchesList = ClientSpooferOptions.MOD_FILTER_LIST.stream()
+                            .anyMatch(mod -> payloadId.startsWith(mod.toLowerCase()));
+
+                    if (ClientSpooferOptions.MOD_FILTER_STRATEGY == ClientSpooferOptions.FilterStrategy.ALLOWLIST) {
+                        if (matchesList) return;
+                    } else {
+                        if (!matchesList) return;
                     }
-                } else if (ClientSpooferOptions.SPOOF_MODE == SpoofMode.CUSTOM &&
-                        ClientSpooferOptions.DISABLE_CUSTOM_PAYLOADS) {
-                    for (String channel : ClientSpooferOptions.ALLOWED_CUSTOM_PAYLOAD_CHANNELS) {
-                        if (payload.type().id().toString().toLowerCase().startsWith(channel.toLowerCase())) {
-                            return;
+                } else if (ClientSpooferOptions.shouldPreventFingerprinting()) {
+                    if (ClientSpooferOptions.PAYLOAD_POLICY == ClientSpooferOptions.PayloadPolicy.ALLOWLIST) {
+                        for (String channel : ClientSpooferOptions.PAYLOAD_CHANNELS) {
+                            if (payloadId.startsWith(channel.toLowerCase())) {
+                                return;
+                            }
                         }
+                    } else if (ClientSpooferOptions.PAYLOAD_POLICY == ClientSpooferOptions.PayloadPolicy.ALLOW_ALL) {
+                        return;
                     }
                 }
                 ci.cancel();

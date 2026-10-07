@@ -42,7 +42,7 @@ public class MixinCommandSuggestions {
                 }
 
                 if (!shouldHide) {
-                    for (String hiddenMod : ClientSpooferOptions.HIDDEN_MODS) {
+                    for (String hiddenMod : ClientSpooferOptions.MOD_FILTER_LIST) {
                         String cleanMod = hiddenMod.toLowerCase().replace("-", "").replace("_", "").trim();
                         if (!cleanMod.isEmpty() && text.contains(cleanMod)) {
                             shouldHide = true;

@@ -37,10 +37,10 @@ public class LogBrowserScreen extends Screen {
             allLines.add("Failed to load logs: " + e.getMessage());
         }
         Button chatCensorButton = Button.builder(
-                Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HideChatMentions),
+                Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HIDE_CHAT_MENTIONS),
                 button -> {
-                    ClientSpooferOptions.HideChatMentions = !ClientSpooferOptions.HideChatMentions;
-                    button.setMessage(Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HideChatMentions));
+                    ClientSpooferOptions.HIDE_CHAT_MENTIONS = !ClientSpooferOptions.HIDE_CHAT_MENTIONS;
+                    button.setMessage(Component.translatable("spoofified.screen.log_browser.censor_button", ClientSpooferOptions.HIDE_CHAT_MENTIONS));
                 }).bounds(
                 0, 0, this.font.width("Censor mod mentions from chat in logs: false") + 15, 20
         ).build();
@@ -126,9 +126,7 @@ public class LogBrowserScreen extends Screen {
         public LogEntry(int originalIndex, String line) {
             this.originalIndex = originalIndex;
             this.line = line;
-            this.deleteBtn = Button.builder(Component.literal("§c✕"), b -> {
-                deleteLine(this.originalIndex);
-            }).bounds(0, 0, 20, 20).build();
+            this.deleteBtn = Button.builder(Component.literal("§c✕"), b -> deleteLine(this.originalIndex)).bounds(0, 0, 20, 20).build();
         }
 
         @Override

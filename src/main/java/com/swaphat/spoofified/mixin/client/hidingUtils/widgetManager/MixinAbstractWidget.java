@@ -2,6 +2,7 @@ package com.swaphat.spoofified.mixin.client.hidingUtils.widgetManager;
 
 import com.swaphat.spoofified.ClientSpooferOptions;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.swaphat.spoofified.gui.ContextMenuState;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public abstract class MixinAbstractWidget {
     @Shadow public abstract void setHeight(int height);
 
     @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
-    private void clientspoofer$checkStates(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void clientspoofer$checkStates(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
         String uniqueId = ClientSpooferOptions.getWidgetId((AbstractWidget)(Object)this);
@@ -46,23 +47,23 @@ public abstract class MixinAbstractWidget {
             this.setHeight(bounds.height);
         }
 
-        if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
+        if (ClientSpooferOptions.REMOVED_WIDGETS.contains(uniqueId)) {
             this.setX(-5000);
             this.setY(-5000);
             ci.cancel();
             return;
         }
 
-        if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId)) {
+        if (ClientSpooferOptions.INVISIBLE_WIDGETS.contains(uniqueId)) {
             ci.cancel();
         }
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
-    private void clientspoofer$drawNormalMenu(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void clientspoofer$drawNormalMenu(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
-        if (ClientSpooferOptions.ACTIVE_MENU_OWNER != null) {
+        if (ContextMenuState.ACTIVE_MENU_OWNER != null) {
             Screen screen = Minecraft.getInstance().gui.screen();
             if (screen != null) {
                 List<AbstractWidget> widgets = Screens.getWidgets(screen);
@@ -72,14 +73,14 @@ public abstract class MixinAbstractWidget {
                     AbstractWidget w = widgets.get(i);
                     String id = ClientSpooferOptions.getWidgetId(w);
 
-                    if (w.visible && !ClientSpooferOptions.DELETED_WIDGETS.contains(id) && !ClientSpooferOptions.HIDDEN_WIDGETS.contains(id)) {
+                    if (w.visible && !ClientSpooferOptions.REMOVED_WIDGETS.contains(id) && !ClientSpooferOptions.INVISIBLE_WIDGETS.contains(id)) {
                         lastVisible = w;
                         break;
                     }
                 }
 
                 if (lastVisible == (Object) this) {
-                    clientspoofer$drawContextMenu(graphics, ClientSpooferOptions.ACTIVE_MENU_OWNER);
+                    clientspoofer$drawContextMenu(graphics, ContextMenuState.ACTIVE_MENU_OWNER);
                 }
             }
         }
@@ -87,10 +88,10 @@ public abstract class MixinAbstractWidget {
 
     @Unique
     private void clientspoofer$drawContextMenu(GuiGraphicsExtractor graphics, AbstractWidget owner) {
-        int mx = ClientSpooferOptions.MENU_X;
-        int my = ClientSpooferOptions.MENU_Y;
+        int mx = ContextMenuState.MENU_X;
+        int my = ContextMenuState.MENU_Y;
         String uniqueId = ClientSpooferOptions.getWidgetId(owner);
-        boolean isHidden = ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId);
+        boolean isHidden = ClientSpooferOptions.INVISIBLE_WIDGETS.contains(uniqueId);
 
         // Draw Dark Background & White Border for Main Menu
         graphics.fill(mx, my, mx + 80, my + 65, 0xEE000000);
@@ -130,7 +131,7 @@ public abstract class MixinAbstractWidget {
 
         if (ClientSpooferOptions.LOCKED_WIDGETS.contains(uniqueId)) return;
 
-        if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
+        if (ClientSpooferOptions.REMOVED_WIDGETS.contains(uniqueId)) {
             cir.setReturnValue(false);
             return;
         }
@@ -147,12 +148,12 @@ public abstract class MixinAbstractWidget {
         boolean isHovering = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.getWidth() && mouseY < this.getY() + this.getHeight();
 
         if (isHovering && event.button() == 3 && isCtrlDown) {
-            if (ClientSpooferOptions.ACTIVE_MENU_OWNER == (Object) this) {
-                ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
+            if (ContextMenuState.ACTIVE_MENU_OWNER == (Object) this) {
+                ContextMenuState.ACTIVE_MENU_OWNER = null;
             } else {
-                ClientSpooferOptions.ACTIVE_MENU_OWNER = (AbstractWidget) (Object) this;
-                ClientSpooferOptions.MENU_X = (int) mouseX;
-                ClientSpooferOptions.MENU_Y = (int) mouseY;
+                ContextMenuState.ACTIVE_MENU_OWNER = (AbstractWidget) (Object) this;
+                ContextMenuState.MENU_X = (int) mouseX;
+                ContextMenuState.MENU_Y = (int) mouseY;
                 cir.setReturnValue(true);
             }
         }
@@ -165,7 +166,7 @@ public abstract class MixinAbstractWidget {
 
         String uniqueId = ClientSpooferOptions.getWidgetId((AbstractWidget)(Object)this);
 
-        if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
+        if (ClientSpooferOptions.REMOVED_WIDGETS.contains(uniqueId)) {
             cir.setReturnValue(0);
         }
         else if (ClientSpooferOptions.CUSTOM_BOUNDS.containsKey(uniqueId)) {
@@ -179,7 +180,7 @@ public abstract class MixinAbstractWidget {
 
         String uniqueId = ClientSpooferOptions.getWidgetId((AbstractWidget)(Object)this);
 
-        if (ClientSpooferOptions.DELETED_WIDGETS.contains(uniqueId)) {
+        if (ClientSpooferOptions.REMOVED_WIDGETS.contains(uniqueId)) {
             cir.setReturnValue(0);
         }
         else if (ClientSpooferOptions.CUSTOM_BOUNDS.containsKey(uniqueId)) {

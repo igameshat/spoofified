@@ -21,7 +21,6 @@ public class LogCensor implements RewritePolicy {
     public static void register() {
         LoggerContext context = (LoggerContext) LogManager.getContext(false);
         Configuration config = context.getConfiguration();
-
         LoggerConfig rootConfig = config.getRootLogger();
 
         List<AppenderRef> originalRefs = new ArrayList<>(rootConfig.getAppenderRefs());
@@ -43,11 +42,9 @@ public class LogCensor implements RewritePolicy {
         }
 
         rootConfig.addAppender(rewriteAppender, rootConfig.getLevel(), rootConfig.getFilter());
-
         context.updateLoggers();
     }
 
-    // Generates a random string of 5 to 12 asterisks
     private String getRandomStars() {
         int length = ThreadLocalRandom.current().nextInt(5, 13);
         return "*".repeat(length);
@@ -55,23 +52,23 @@ public class LogCensor implements RewritePolicy {
 
     @Override
     public LogEvent rewrite(LogEvent source) {
-        if (!ClientSpooferOptions.ENABLED || ClientSpooferOptions.HIDDEN_MODS.isEmpty()) {
+        if (!ClientSpooferOptions.ENABLED || ClientSpooferOptions.MOD_FILTER_LIST.isEmpty()) {
             return source;
         }
 
         String originalMsg = source.getMessage() != null ? source.getMessage().getFormattedMessage() : "";
 
-        if (originalMsg.contains("[CHAT]") && ClientSpooferOptions.HideChatMentions) {
+        // Updated variable name
+        if (originalMsg.contains("[CHAT]") && ClientSpooferOptions.HIDE_CHAT_MENTIONS) {
             return source;
         }
 
         String originalLogger = source.getLoggerName() != null ? source.getLoggerName() : "";
-
         String censoredMsg = originalMsg;
         String censoredLogger = originalLogger;
         boolean wasModified = false;
 
-        for (String hiddenMod : ClientSpooferOptions.HIDDEN_MODS) {
+        for (String hiddenMod : ClientSpooferOptions.MOD_FILTER_LIST) {
             String sanitizedId = hiddenMod.toLowerCase().replace("-", "").replace("_", "");
 
             if (censoredMsg.toLowerCase().contains(sanitizedId)) {
@@ -87,7 +84,7 @@ public class LogCensor implements RewritePolicy {
         }
 
         if (!wasModified) {
-            return source; // If clean, return the original event untouched
+            return source;
         }
 
         // Return a cloned event with the censored text

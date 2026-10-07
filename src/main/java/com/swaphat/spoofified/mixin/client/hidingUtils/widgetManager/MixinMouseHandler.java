@@ -3,6 +3,7 @@ package com.swaphat.spoofified.mixin.client.hidingUtils.widgetManager;
 import com.swaphat.spoofified.ClientSpoofer;
 import com.swaphat.spoofified.ClientSpooferOptions;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.swaphat.spoofified.gui.ContextMenuState;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -22,15 +23,15 @@ public class MixinMouseHandler {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
         if (action == 1) {
-            AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
+            AbstractWidget owner = ContextMenuState.ACTIVE_MENU_OWNER;
             if (owner != null) {
                 Minecraft client = Minecraft.getInstance();
 
                 double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
                 double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
 
-                int mx = ClientSpooferOptions.MENU_X;
-                int my = ClientSpooferOptions.MENU_Y;
+                int mx = ContextMenuState.MENU_X;
+                int my = ContextMenuState.MENU_Y;
 
                 boolean inMainMenu = mouseX >= mx && mouseX <= mx + 80 && mouseY >= my && mouseY <= my + 60;
                 boolean inSubMenu = mouseX >= mx + 80 && mouseX <= mx + 180 && mouseY >= my + 40 && mouseY <= my + 120;
@@ -40,10 +41,10 @@ public class MixinMouseHandler {
                         String uniqueId = ClientSpooferOptions.getWidgetId(owner);
 
                         if (mouseY < my + 20) {
-                            if (ClientSpooferOptions.HIDDEN_WIDGETS.contains(uniqueId)) {
-                                ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
+                            if (ClientSpooferOptions.INVISIBLE_WIDGETS.contains(uniqueId)) {
+                                ClientSpooferOptions.INVISIBLE_WIDGETS.remove(uniqueId);
                             } else {
-                                ClientSpooferOptions.HIDDEN_WIDGETS.add(uniqueId);
+                                ClientSpooferOptions.INVISIBLE_WIDGETS.add(uniqueId);
                             }
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
@@ -53,7 +54,7 @@ public class MixinMouseHandler {
 
                         } else if (mouseY < my + 40) {
                             // Delete and Save
-                            ClientSpooferOptions.DELETED_WIDGETS.add(uniqueId);
+                            ClientSpooferOptions.INVISIBLE_WIDGETS.add(uniqueId);
                             if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);
 
                             if (ClientSpooferOptions.AUTO_RECALCULATE_UI && client.gui.screen() != null) {
@@ -61,14 +62,14 @@ public class MixinMouseHandler {
                             }
                         }
                     }
-                    ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
+                    ContextMenuState.ACTIVE_MENU_OWNER = null;
                     ci.cancel();
                 }
                 else if (inSubMenu) {
                     ci.cancel();
                 }
                 else {
-                    ClientSpooferOptions.ACTIVE_MENU_OWNER = null;
+                    ContextMenuState.ACTIVE_MENU_OWNER = null;
                 }
             }
         }
@@ -78,14 +79,14 @@ public class MixinMouseHandler {
     private void clientspoofer$globalScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
         if (ClientSpooferOptions.isProtectedScreen()) return;
 
-        AbstractWidget owner = ClientSpooferOptions.ACTIVE_MENU_OWNER;
+        AbstractWidget owner = ContextMenuState.ACTIVE_MENU_OWNER;
         if (owner != null) {
             Minecraft client = Minecraft.getInstance();
             double mouseX = client.mouseHandler.xpos() * (double)client.getWindow().getGuiScaledWidth() / (double)client.getWindow().getScreenWidth();
             double mouseY = client.mouseHandler.ypos() * (double)client.getWindow().getGuiScaledHeight() / (double)client.getWindow().getScreenHeight();
 
-            int subX = ClientSpooferOptions.MENU_X + 80;
-            int subY = ClientSpooferOptions.MENU_Y + 40;
+            int subX = ContextMenuState.MENU_X + 80;
+            int subY = ContextMenuState.MENU_Y + 40;
 
             if (mouseX >= subX && mouseX <= subX + 100 && mouseY >= subY && mouseY <= subY + 80) {
                 int scrollAmount = yoffset > 0 ? 1 : -1;

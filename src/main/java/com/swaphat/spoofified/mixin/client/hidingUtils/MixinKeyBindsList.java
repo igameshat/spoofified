@@ -29,7 +29,7 @@ public class MixinKeyBindsList {
             String category = mapping.getCategory().toString().toLowerCase();
             String name = mapping.getName().toLowerCase();
 
-            for (String hiddenMod : ClientSpooferOptions.HIDDEN_MODS) {
+            for (String hiddenMod : ClientSpooferOptions.MOD_FILTER_LIST) {
                 String sanitizedId = hiddenMod.toLowerCase().replace("-", "").replace("_", "").trim();
                 if (!sanitizedId.isEmpty() && (category.contains(sanitizedId) || name.contains(sanitizedId))) {
                     return false;

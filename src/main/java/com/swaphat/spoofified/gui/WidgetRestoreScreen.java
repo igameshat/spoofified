@@ -87,9 +87,9 @@ public class WidgetRestoreScreen extends Screen {
     private void refreshList() {
         restoreList.clearEntries();
         Set<String> targetSet = switch (currentCategory) {
-            case HIDDEN -> ClientSpooferOptions.HIDDEN_WIDGETS;
+            case HIDDEN -> ClientSpooferOptions.INVISIBLE_WIDGETS;
             case EDITED -> ClientSpooferOptions.CUSTOM_BOUNDS.keySet();
-            case DELETED -> ClientSpooferOptions.DELETED_WIDGETS;
+            case DELETED -> ClientSpooferOptions.REMOVED_WIDGETS;
         };
 
         for (String uniqueId : targetSet) {
@@ -121,16 +121,12 @@ public class WidgetRestoreScreen extends Screen {
     }
 
     private class RestoreEntry extends ContainerObjectSelectionList.Entry<RestoreEntry> {
-        private final String uniqueId;
         private final String displayScreen;
         private final String displayWidget;
-        private final Category category;
         private final Button resetButton;
         private final int borderColor;
 
         public RestoreEntry(String uniqueId, Category category) {
-            this.uniqueId = uniqueId;
-            this.category = category;
 
             if (uniqueId.contains(":")) {
                 String[] parts = uniqueId.split(":", 2);
@@ -145,8 +141,8 @@ public class WidgetRestoreScreen extends Screen {
             this.borderColor = 0xFF000000 | random.nextInt(0xFFFFFF);
 
             this.resetButton = Button.builder(Component.translatable("spoofified.screen.widget_restore.reset"), _ -> {
-                if (category == Category.HIDDEN) ClientSpooferOptions.HIDDEN_WIDGETS.remove(uniqueId);
-                else if (category == Category.DELETED) ClientSpooferOptions.DELETED_WIDGETS.remove(uniqueId);
+                if (category == Category.HIDDEN) ClientSpooferOptions.INVISIBLE_WIDGETS.remove(uniqueId);
+                else if (category == Category.DELETED) ClientSpooferOptions.REMOVED_WIDGETS.remove(uniqueId);
                 else if (category == Category.EDITED) ClientSpooferOptions.CUSTOM_BOUNDS.remove(uniqueId);
 
                 if (ClientSpoofer.CONFIG_FILE != null) ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);

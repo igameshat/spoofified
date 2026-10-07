@@ -26,7 +26,7 @@ public abstract class MixinLanguageManager {
 
             ClientSpooferOptions.ENABLED = true;
             ClientSpooferOptions.PANIC_MODE = false;
-            ClientSpooferOptions.HIDDEN_MODS.remove("spoofified");
+            ClientSpooferOptions.MOD_FILTER_LIST.remove("spoofified");
 
             if (ClientSpoofer.CONFIG_FILE != null) {
                 ClientSpooferOptions.save(ClientSpoofer.CONFIG_FILE);

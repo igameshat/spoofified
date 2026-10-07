@@ -16,11 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.swaphat.spoofified.ClientSpooferOptions.ALLOWED_MODS;
-import static com.swaphat.spoofified.ClientSpooferOptions.HIDDEN_MODS;
-
 @Mixin(ModMenu.class)
-public abstract class MixinModMain {
+public abstract class MixinModMenuEntrypoint {
     @Shadow @Final public static Map<String, Mod> MODS;
     @Shadow @Final public static Map<String, Mod> ROOT_MODS;
     @Shadow @Final public static ListMultimap<Mod, Mod> PARENT_MAP;
@@ -46,8 +43,8 @@ public abstract class MixinModMain {
             ROOT_MODS.putAll(clientspoofer$originalRootMods);
 
             // Re-apply the hidden mods filter safely
-            MODS.entrySet().removeIf(entry -> HIDDEN_MODS.contains(entry.getKey()));
-            ROOT_MODS.entrySet().removeIf(entry -> HIDDEN_MODS.contains(entry.getKey()));
+            MODS.entrySet().removeIf(entry -> ClientSpooferOptions.MOD_FILTER_LIST.contains(entry.getKey()));
+            ROOT_MODS.entrySet().removeIf(entry -> ClientSpooferOptions.MOD_FILTER_LIST.contains(entry.getKey()));
 
             PARENT_MAP.clear();
         };
@@ -59,7 +56,7 @@ public abstract class MixinModMain {
     private static void getDisplayedModCountTailInjection(CallbackInfoReturnable<String> cir) {
         // Note: MODS.size() is already reduced by your hidden mods at this point!
         // Subtracting ALLOWED_MODS.size() here might give you wonky math.
-        cir.setReturnValue(Integer.toString(MODS.size() - ALLOWED_MODS.size()));
+        cir.setReturnValue(Integer.toString(MODS.size() - ClientSpooferOptions.MOD_FILTER_LIST.size()));
     }
 }
 
